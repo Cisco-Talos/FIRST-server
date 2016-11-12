@@ -1,0 +1,30 @@
+{% extends 'www/base_site.html' %}
+
+{% block nav_block %}
+<ul class="nav navbar-nav local-scroll-no-offset text-center">
+
+    <li class="active">
+        <a href="{% url 'www:index' %}">Home</a>
+    </li>
+    <li>
+        <a target="_blank" href="https://github.com/vrtadmin/FIRST/releases">Download</a>
+    </li>
+
+</ul>
+{% endblock %}
+{% block content %}
+    <section class="section-wrap intro" id="about">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="text-center">
+                        <div class="wow slideInDown" data-wow-duration="1.2s" data-wow-delay="0s" style="visibility: visible; animation-duration: 1.2s; animation-delay: 0s; animation-name: slideInDown;">
+                            <h2 class="intro-heading heading-frame">
+                                404 <span style="color:#F29614">Page</span>
+                            </h2>
+                            <p>Sorry the page you were looking for cannot be found.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+{% endblock %}

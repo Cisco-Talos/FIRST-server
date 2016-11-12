@@ -1,0 +1,8 @@
+mysqlclient
+mongoengine
+django
+werkzeug
+distorm3
+httplib2
+oauth2client
+google-api-python-client

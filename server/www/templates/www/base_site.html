@@ -1,0 +1,629 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>{{ title | default:'FIRST'}}</title>
+
+        <meta charset="utf-8">
+        <!--[if IE]>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+        <meta name="description" content="{{ description | default:'Function Identification and Recovery Signature Tool' }}">
+
+        <!-- Css -->
+        <link rel="stylesheet" href="{% static 'www/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/magnific-popup.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/font-icons.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/revolution/css/settings.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/rev-slider.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/style.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/responsive.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/spacings.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/animate.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/talos-guy_small.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/talos-guy_xs.css' %}"/>
+        <link rel="stylesheet" href="{% static 'www/css/ribbon.css' %}"/>
+        <link rel='stylesheet' href="{% static 'www/css/googleapi.css' %}">
+        <!-- Favicons -->
+        <link rel="shortcut icon" href="{% static 'www/img/favicon.ico' %}">
+        <link rel="apple-touch-icon" href="{% static 'www/img/first-icon.png' %}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{% static 'www/img/first-icon-72x72.png' %}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{% static 'www/img/first-icon-114x114.png' %}">
+
+        <script src="https://use.fontawesome.com/4efc02f455.js"></script>
+</head>
+
+<body data-spy="scroll" data-offset="60" data-target=".navbar" class="sidenav">
+    <!-- Preloader -->
+    <div class="loader-mask">
+        <div class="loader">
+            "Loading..."
+        </div>
+    </div>
+
+    <div class="content-wrap oh">
+        <!-- Navigation -->
+        <header class="nav-type-4">
+
+            <nav class="navbar">
+                <div class="nav-left">
+                    <div class="container header-wrap relative">
+                        <div class="row">
+
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                                        data-target="#navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+
+                                <!-- Logo -->
+                                <div class="logo-container">
+                                    <div class="logo-wrap local-scroll-no-offset">
+                                        <a href="#home">
+                                            <img class="logo first_logo" src="{% static 'www/img/logo_l.png' %}" alt="logo">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div> <!-- end navbar-header -->
+
+                            <div class="col-md-8 col-xs-12 nav-wrap">
+                                <div class="collapse navbar-collapse text-center" id="navbar-collapse">
+                                    {% block nav_block %}
+                                    <ul class="nav navbar-nav local-scroll-no-offset text-center">
+
+                                        <li class="active">
+                                            <a href="#home">Home</a>
+                                        </li>
+                                        {% if login_html %}
+                                        <li>
+                                            <a href='#' data-toggle="modal" data-target="#modalLogin">Login</a>
+                                        </li>
+                                        {% endif %}
+                                        <li>
+                                            <a href="#about">About</a>
+                                        </li>
+                                        <li>
+                                            <a href="#requirement">Requirements &amp; Installation</a>
+                                        </li>
+                                        <li>
+                                            <a href="#submit_engine">Submit Engine</a>
+                                        </li>
+                                        {% if register_html %}
+                                        <li>
+                                            <a href='#' data-toggle="modal" data-target="#modalRegistration">Register</a>
+                                        </li>
+                                        {% endif %}
+                                        <li>
+                                            <a target="_blank" href="https://github.com/vrtadmin/FIRST/releases">Download</a>
+                                        </li>
+
+                                    </ul>
+                                    {% endblock %}
+                                </div>
+                                <div id="talos-guy" class="talos_character">
+                                    <div class="newcharactertalos">
+                                        <div class="chairtalos"></div>
+                                        <div class="leftshoetalos"></div>
+                                        <div class="rightshoetalos"></div>
+                                        <div class="legstalos"></div>
+                                        <div class="torsotalos">
+                                            <div class="bodytalos"></div>
+                                            <div class="leftarmtalos"></div>
+                                            <div class="rightarmtalos"></div>
+                                            <div class="headtalos">
+                                                <div class="eyestalos"></div>
+                                            </div>
+                                        </div>
+                                        <div class="laptoptalos"></div>
+
+                                    </div>
+                                </div>
+                                <div id="talos-guy_xs" class="talos_character_xs">
+                                    <div class="newcharactertalos_xs">
+                                        <div class="chairtalos_xs"></div>
+                                        <div class="leftshoetalos_xs"></div>
+                                        <div class="rightshoetalos_xs"></div>
+                                        <div class="legstalos_xs"></div>
+                                        <div class="torsotalos_xs">
+                                            <div class="bodytalos_xs"></div>
+                                            <div class="leftarmtalos_xs"></div>
+                                            <div class="rightarmtalos_xs"></div>
+                                            <div class="headtalos_xs">
+                                                <div class="eyestalos_xs"></div>
+                                            </div>
+                                        </div>
+                                        <div class="laptoptalos_xs"></div>
+                                    </div>
+                                </div>
+                            </div> <!-- end col -->
+
+                        </div>
+
+                    </div> <!-- end container -->
+                </div> <!-- end navigation -->
+            </nav> <!-- end navbar -->
+
+        </header> <!-- end navigation -->
+
+
+        <div class="main-wrapper-onepage oh">
+            <div class="wrapper">
+                <div class="ribbon-wrapper">
+                    <div class="ribbon-talos">
+                        Closed Beta
+                    </div>
+                </div>
+            </div>
+
+            {% block content %}
+            <section id="home">
+                <div class="rev_slider_wrapper">
+                    <div class="rev_slider" id="slider5" data-version="5.0">
+                        <ul style="background-color: #45738c;">
+
+                            <li data-transition="scaleleftfromright"
+                                data-easein="default"
+                                data-easeout="default"
+                                data-slotamount="4"
+                                data-masterspeed="600"
+                                data-delay="800000"
+                                data-title="FIRST"
+                            >
+                                <!-- MAIN IMAGE -->
+                                <img src="{% static 'www/img/logo.png' %}"
+                                     alt=""
+                                     data-bgrepeat="no-repeat"
+                                     data-bgparallax="7"
+                                     class="rev-slidebg"
+                                >
+
+                                <!-- LAYER NR. 1 -->
+                                <div class="tp-caption hero-text giant_nocaps rs-parallaxlevel-7"
+                                     data-x="center"
+                                     data-y="center"
+                                     data-transform_idle="o:1;s:1000;"
+                                     data-transform_in="y:-50px;opacity:0;s:1500;e:Power3.easeOut;"
+                                     data-transform_out="opacity:0;sX:0;sY:0;s:2000;e:Power3.easeInOut;"
+                                     data-start="1000">
+                                    <!--FIRST-->
+                                    <img src="{% static 'www/img/first_logo.png' %}"/>
+                                </div>
+
+                                <!-- LAYER NR. 2 -->
+                                <div class="tp-caption rs-parallaxlevel-7"
+                                     data-x="center"
+                                     data-y="center"
+                                     data-transform_idle="o:1;s:1000;"
+                                     data-transform_in="y:-50px;opacity:0;s:1500;e:Power3.easeOut;"
+                                     data-transform_out="opacity:0;sX:0;sY:0;s:2000;e:Power3.easeInOut;"
+                                     data-voffset="143"
+                                     data-hoffset="0"
+                                     data-start="1200"
+                                     style="z-index: 13; max-width: auto; max-height: auto; white-space: nowrap; padding-top: 15px;">
+                                    <div id="main_content" align="center">
+                                        <a href='#' class='btn btn-lg btn-transparent' data-toggle="modal"
+                                           data-target="#modalRegistration">Register</a>
+                                        <a href='https://github.com/vrtadmin/FIRST' target="_blank"
+                                           class='btn btn-lg btn-color'>Download</a>
+                                    </div>
+                                </div>
+
+
+                            </li>
+
+                        </ul>
+
+                        <div class="local-scroll-no-offset">
+                            <a href="#about" class="scroll-down">
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap intro" id="about">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="text-center">
+                            <div class="wow slideInDown" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <h2 class="intro-heading heading-frame">
+                                    Welcome to First
+                                </h2>
+                            </div>
+                            <div class="container">
+                                <div class="row mt-minus-30">
+
+                                    <div class="col-sm-6 wow slideInLeft" align="left" data-wow-duration="1.2s"
+                                         data-wow-delay="0s">
+                                        <div class="about-description mt-30">
+                                            <h4>About Us</h4>
+                                            <p class="mb-60">
+                                                The Function Identification and Recover Signature Tool (FIRST) developed by
+                                                Talos, is an IDA Pro
+                                                plugin that
+                                                allows reverse engineers to more quickly complete static analysis. It makes
+                                                finding similar
+                                                functions faster and easier by removing the need to synchronize function
+                                                metadata. 
+                                            </p>
+                                            <p>
+                                                FIRST’s extensible framework allows users to submit function metadata to a
+                                                repository and
+                                                search the repository for function metadata similar to the function
+                                            </p>
+                                        </div>
+                                    </div> <!-- end col -->
+
+                                    <div class="col-sm-6 wow slideInRight" align="left" data-wow-duration="1.2s"
+                                         data-wow-delay="0s">
+                                        <div id="skills" class="skills-progress">
+                                            <h4>Goals</h4>
+                                            <p>
+                                                Users can contribute function metadata and search for function metadata
+                                                similar to the function(s) being analyzed in IDA. FIRST’s framework allows
+                                                developers to create new ways to derive similarities between functions.
+                                            </p>
+                                            <ul style="list-style: circle; padding-left: 25px;">
+                                                <li>
+                                                    Save function metadata (name, prototype, and comment)
+
+                                                </li>
+                                                <li>
+                                                    Provide way to find similar functions
+                                                </li>
+                                                <li>
+                                                    Allow users to apply function metadata in IDA Pro
+                                                </li>
+                                                <li>
+                                                    Reduce reverse engineering time
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> <!-- end col -->
+
+                                </div>
+                            </div>
+                            <div class="wow slideInUp" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <img src="{% static 'www/img/intro_logo.png' %}" alt=""/>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section> <!-- end intro -->
+
+            <section class="result-boxes">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="col-lg-6 col-md-12 nopadding wow slideInLeft" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="statistic result-box result-box-second">
+                                <div class="result-wrap clearfix">
+                                    <i class="icon icon-User"></i>
+                                    <span class="timer" data-from="0" data-to="{{ user_num | default:'?' }}">{{ user_num | default:'?' }}</span>
+                                    <span class="counter-text">Users</span>
+                                </div>
+                            </div>
+                        </div> <!-- end second result box -->
+
+                        <div class="col-lg-6 col-md-12 nopadding wow slideInRight" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="statistic result-box result-box-third">
+                                <div class="result-wrap clearfix">
+                                    <i class="icon icon-Settings"></i>
+                                    <span class="timer" data-from="0" data-to="{{ function_num | default:'?' }}">{{ function_num | default:'?' }}</span>
+                                    <span class="counter-text">Functions</span>
+                                </div>
+                            </div>
+                        </div> <!-- end third result box -->
+
+                    </div>
+                </div>
+            </section> <!-- end results-->
+            {% endblock %}
+            <section class="section-wrap pb-mdm-50 pb-50" id="requirement">
+                <div class="container-fluid">
+
+                    <div class="row heading">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="wow slideInDown" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <h2 class="text-center bottom-line">Requirements &amp; Installation</h2>
+                                <p class="subheading text-center">
+                                    Implement the FIRST plugin today!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="wow slideInLeft" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="col-lg-3 col-md-6 install-item">
+                                <div class="install-item-box icon-effect-1 icon-effect-1a text-center">
+                                    <a href="#">
+                                        <i class="icon icon-Star hi-icon"></i>
+                                    </a>
+                                    <h3>
+                                        Requirements
+                                    </h3>
+                                    <ul style="list-style: circle;">
+                                        <li>
+                                            IDA Pro 6.9 SP1
+                                        </li>
+                                        <li>
+                                            Python Requests (https://pypi.python.org/pypi/requests/)
+                                        </li>
+                                    </ul>
+
+
+                                </div>
+                            </div> <!-- end service item -->
+
+                            <div class="col-lg-3 col-md-6 install-item">
+                                <div class="install-item-box icon-effect-1 icon-effect-1a text-center">
+                                    <a href="#">
+                                        <i class="icon icon-Download hi-icon"></i>
+                                    </a>
+                                    <h3>
+                                        Download
+                                    </h3>
+                                    <p>
+                                        The IDA Pro plug-in can be downloaded from
+                                        <a target="_blank" href="https://github.com/vrtadmin/FIRST">
+                                            GitHub
+                                        </a>
+                                    </p>
+                                </div>
+                            </div> <!-- end service item -->
+
+                        </div>
+                        <div class="wow slideInRight" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="col-lg-3 col-md-6 install-item">
+                                <div class="install-item-box icon-effect-1 icon-effect-1a text-center">
+                                    <a href="#">
+                                        <i class="icon icon-Hourglass hi-icon"></i>
+                                    </a>
+                                    <h3>Install</h3>
+                                    <p>
+                                        For the most stable version of FIRST, get the plug-in from the master branch. For
+                                        the latest
+                                        <span style="display: none;" class="install_container">
+                                        (not stable) version of FIRST, get the plug-in from any of the
+                                        development branches.
+                                        </span>
+                                        <a href="#" class="install_more">
+                                            (more)
+                                        </a>
+                                    </p>
+                                    <p style="display: none;" class="install_container">
+                                        Once you have a copy of the plug-in, installing the plug-in is as simple as copying
+                                        the Python file into the plugins folder. For IDA Pro 6.9 installed on Windows this
+                                        folder can be found at: C:\Program Files (x86)\IDA 6.9\plugins
+                                        <a href="#" class="install_container">
+                                            (less)
+                                        </a>
+                                    </p>
+                                </div>
+                            </div> <!-- end service item -->
+
+                            <div class="col-lg-3 col-md-6 install-item">
+                                <div class="install-item-box icon-effect-1 icon-effect-1a text-center">
+                                    <a href="#">
+                                        <i class="icon icon-Notebook hi-icon"></i>
+                                    </a>
+                                    <h3>Documentation</h3>
+                                    <p>
+                                        Check out our <a href="http://docs.first-plugin.us/">Docs</a>.
+                                    </p>
+                                </div>
+                            </div> <!-- end service item -->
+
+                        </div>
+
+                    </div>
+                </div>
+            </section> <!-- end services -->
+
+            <section id="submit_engine" class="section-wrap process" style="background-color: #45738c;">
+
+                <div class="container">
+
+                    <div class="row heading">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="wow slideInLeft" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <h2 class="text-center color-white bottom-line">Submit Your Own Engine</h2>
+                            </div>
+                            <div class="wow slideInRight" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <p class="subheading text-center color-white">Show Us What You Got!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-12 cta-button text-center wow slideInUp" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <a href="#" class="btn btn-lg btn-color">Submit Engine</a>
+                        </div>
+
+                    </div>
+                </div>
+            </section> <!-- process -->
+
+            <!-- Footer -->
+            <footer class="footer minimal bg-dark">
+              <div class="container">
+                <div class="row">
+
+                  <div class="col-md-4 col-md-offset-4">
+
+                    <div class="footer-logo local-scroll mb-30 wow zoomIn" data-wow-duration="1s"
+                         data-wow-delay="0.2s">
+                      <h2>
+                        <a href="http://tools.cisco.com/security/center/home.x" target="_blank">
+                          <img src="{% static 'www/img/cisco_logo_white.svg' %}" width="80">
+                        </a>
+                      </h2>
+                    </div>
+
+                    <div class="wow slideInUp" data-wow-duration="1.2s"
+                         data-wow-delay="0s">
+                      <div class="copyright text-center">
+                        © 2016 Cisco Systems, Inc. and/or its affiliates. All rights reserved. View our
+                        <a class="underline" href="http://www.cisco.com/web/siteassets/legal/privacy_full.html"
+                           target="_blank">Privacy Policy</a>here.
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </footer> <!-- end footer -->
+
+            <div id="back-to-top">
+                <a href="#top"><i class="fa fa-angle-up"></i></a>
+            </div>
+
+        </div> <!-- end main-wrapper -->
+    </div> <!-- end content wrap -->
+
+    <!-- jQuery Scripts -->
+    <script type="text/javascript" src="{% static 'www/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/js/plugins.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/jquery.themepunch.tools.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/source/jquery.themepunch.revolution.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/js/rev-slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/js/scripts.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.video.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.carousel.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.slideanims.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.actions.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.layeranimation.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.kenburn.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.navigation.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.migration.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'www/revolution/js/extensions/revolution.extension.parallax.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function ($) {
+            $(".install_more").click(function (e) {
+                e.preventDefault();
+                $(this).hide();
+                $(".install_container").slideDown();
+            });
+
+            $("a.install_container").click(function (e) {
+                e.preventDefault();
+                $(this).hide();
+                $('.install_more').show();
+                $(".install_container").slideUp();
+            });
+        });
+    </script>
+
+    {% if login_html %}
+    <!-- Login -->
+    <div class="modal fade" id="modalLogin" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="/register" id="registration-form" method="post">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalLoginLabel">Select Login Service</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12" id="registration-msg" style="display:none;">
+                                <div class="alert"></div>
+                            </div>
+                            <div class="col-sm-6 float-left">
+                                <a href="{% url 'www:login' service='google' %}" class="partner-box">
+                                    <img class="logo" src="{% static 'www/img/google.png' %}" width="100px" height="100px" alt="Google OAuth2">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-color" id="registration-submit-btn">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if register_html %}
+    <!-- Registration -->
+    <div class="modal fade" id="modalRegistration" tabindex="-1" role="dialog" aria-labelledby="modalRegistrationLabel">
+        <div class="modal-dialog" role="document" style="background-color: #111;">
+            <div class="modal-content">
+                <form action="{% url 'www:register' %}" id="registration-form" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modalRegistrationLabel">Register</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row register-description">
+                            <p>To register, enter in a handle (username) and select which OAuth service you would like to use for authentication.</p>
+                            <p>FIRST only uses the OAuth2 service to associate your registation to an email address and to display your name.
+                            No other information is obtained through the service.</p>
+                            <p>Handles can only contain alphanumeric characters and underscores</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" id="registration-msg" style="display:none;">
+                                <div class="alert"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Handle" id="handle" name="handle"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div class="select relative">
+                                        <i class="fa fa-angle-down"></i>
+                                        <select name="service" required>
+                                            <option value="" disabled selected style="display:none;">Choose OAuth2 Service</option>
+                                            <option value="google">Google</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-color">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {%  endif %}
+
+</body>
+</html>
