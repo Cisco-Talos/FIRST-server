@@ -1,0 +1,73 @@
+#-------------------------------------------------------------------------------
+#
+#   FIRST Engine: <Engine Name>
+#   Author: <Author> (<Author Email>)
+#   Last Modified: <Month> <Year>
+#
+#   <Description of Engine>
+#
+#   Requirements
+#   ------------
+#   -   <Required Third Party Modules>
+#
+#   Installation
+#   ------------
+#   <Any special install instructions>
+#
+#-------------------------------------------------------------------------------
+
+#   Python Modules
+
+
+#   FIRST Modules
+from first.error import FIRSTError
+from first.engines import AbstractEngine
+
+#   Third Party Modules
+
+
+class <Class Name>(AbstractEngine):
+    #   Required Properties
+    #--------------------------------------------------------------------------
+    _name = 'UniqueName'                #   unqiue engine name, users will see
+    _description = 'Engine description' #   engine description, users will see
+    _required_db_names = ['<DB Name>']  #   list of required DB modules
+
+
+    #   Required Methods
+    #--------------------------------------------------------------------------
+    def _add(self, function):
+        '''
+        Perform steps to add this function to some representation that will be
+        matched on later by _scan. The function's id should be stored and
+        assocaited with whatever mechanism used to find similar functions.
+
+        @param function: Dictionary.
+                        {
+                            'id' : String. Function ID in string form
+                            'opcodes' : String. Binary data in string form
+                            'architecture' : String. IDA Pro's get_file_type_name()
+                            'apis' : List of Strings. Direct IAT API calls
+                            'sha256' : String. Hex digest
+                        }
+        '''
+        raise FIRSTError('TODO: implement')
+
+
+    def _scan(self, opcodes, architecture, apis):
+        '''
+        Uses the provided opcodes, architecture and/or apis to find similary
+        functions already stored from the self._add function. This function
+        should return a list of tuples. The tuple is a pairing of a
+        function's ID that is similar to the provided data and a floating
+        value (0.0 - 100.0) that represents how similar the returned
+        function is to the provided one.
+
+        @param      opcodes : String. Binary data in string form
+        @param architecture : String. IDA Pro's get_file_type_name()
+        @param         apis : List of Strings. Direct IAT API calls
+
+        @return List of tuples. [(function ID, similarity percentage)]
+        @return None. For this engine to be skipped
+        '''
+        raise FIRSTError('TODO: implement')

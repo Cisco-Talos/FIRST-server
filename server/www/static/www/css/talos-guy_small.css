@@ -1,0 +1,228 @@
+@keyframes type{
+    from { width: 0; }
+}
+
+@keyframes type2{
+    0%{width: 0;}
+    50%{width: 0;}
+    100%{ width: 30; }
+}
+
+@keyframes blink{
+    to{opacity: .0;}
+}
+
+::selection{
+    background: black;
+}
+
+@import "compass/css3";
+
+.talos_character {
+    height: 800px;
+}
+
+.bodytalos, .headtalos, .eyestalos, .leftarmtalos, .rightarmtalos, .chairtalos, .leftshoetalos, .rightshoetalos, .legstalos, .laptoptalos {
+    background: url('../img/talos-guy.png') 0 0 no-repeat;
+    width: 200px;
+    height: 200px;
+// border: 1px dotted red;
+}
+
+.newcharactertalos, .torsotalos, .bodytalos, .headtalos, .eyestalos, .leftarmtalos, .rightarmtalos, .chairtalos, .leftshoetalos, .rightshoetalos, .legstalos, .laptoptalos {
+    background-size: 450px;
+    position: absolute;
+    display: block;
+}
+
+.newcharactertalos {
+    width: 400px;
+    height: 800px;
+    left: 57%;
+    top: 550px;
+    margin-left: -200px;
+}
+
+$swayspeed: 20s;
+
+.torsotalos {
+    position: absolute;
+    display: block;
+    top: 138px;
+    left: 0px;
+    width: 289px;
+    height: 152px;
+    animation: sway $swayspeed ease infinite;
+    transform-origin: 20% 100%;
+}
+
+.bodytalos {
+    position: absolute;
+    display: block;
+    top: -50px;
+    left: 80px;
+    width: 235px;
+    height: 153px;
+}
+
+.headtalos {
+    position: absolute;
+    top: -142px;
+    left: 132px;
+    width: 100px;
+    height: 118px;
+    background-position: 10px -158px;
+    transform-origin: 50% 85%;
+    animation: headTilt $swayspeed ease infinite;
+}
+
+.eyestalos {
+    position: absolute;
+    top: 49px;
+    left: 24px;
+    width: 53px;
+    height: 18px;
+    background-position: -152px -458px;
+    animation: blinktalos 10s steps(1) infinite, pan 10s ease-in-out infinite;
+}
+
+.leftarmtalos {
+    position: absolute;
+    top: 49px;
+    left: 80px;
+    width: 103px;
+    height: 47px;
+    background-position: -159px -208px;
+    transform-origin: 9% 35%;
+    transform: rotateZ(0deg);
+    animation: typeLeft 0.4s linear infinite;
+}
+
+.rightarmtalos {
+    position: absolute;
+    top: 49px;
+    left: 219px;
+    width: 103px;
+    height: 47px;
+    background-position: -265px -200px;
+    transform-origin: 90% 25%;
+    animation: typeLeft 0.4s linear infinite;
+}
+
+.chairtalos {
+    position: absolute;
+    top: 160px;
+    left: 118px;
+    width: 160px;
+    height: 215px;
+    background-position: -5px -417px;
+}
+
+.legstalos {
+    position: absolute;
+    top: 118px;
+    left: 90px;
+    width: 225px;
+    height: 155px;
+    background-position: -228px -263px;
+}
+
+.leftshoetalos {
+    position: absolute;
+    top: 254px;
+    left: 110px;
+    width: 80px;
+    height: 55px;
+    background-position: -188px -450px;
+}
+
+.rightshoetalos {
+    position: absolute;
+    top: 245px;
+    left: 205px;
+    width: 85px;
+    height: 58px;
+    background-position: -275px -445px;
+    transform-origin: 35% 12%;
+    animation: tapRight 1s linear infinite;
+}
+
+.laptoptalos {
+    position: absolute;
+    top: 55px;
+    left: 86px;
+    width: 225px;
+    height: 140px;
+    background-position: 0 -275px;
+    transform-origin: 50% 100%;
+    animation: tapWobble 0.4s linear infinite;
+}
+
+@keyframes sway {
+    0%   { transform: rotateZ(0deg); }
+    20%  { transform: rotateZ(0deg); }
+    25%  { transform: rotateZ(4deg); }
+    45%  { transform: rotateZ(4deg); }
+    50%  { transform: rotateZ(0deg); }
+    70%  { transform: rotateZ(0deg); }
+    75%  { transform: rotateZ(-4deg); }
+    90%  { transform: rotateZ(-4deg); }
+    100% { transform: rotateZ(0deg); }
+}
+
+@keyframes headTilt {
+    0%   { transform: rotateZ(0deg); }
+    20%  { transform: rotateZ(0deg); }
+    25%  { transform: rotateZ(-4deg); }
+    35%  { transform: rotateZ(-4deg); }
+    38%  { transform: rotateZ(2deg); }
+    42%  { transform: rotateZ(2deg); }
+    45%  { transform: rotateZ(-4deg); }
+    50%  { transform: rotateZ(0deg); }
+    70%  { transform: rotateZ(0deg); }
+    82%  { transform: rotateZ(0deg); }
+    85%  { transform: rotateZ(4deg); }
+    90%  { transform: rotateZ(4deg); }
+    100% { transform: rotateZ(0deg); }
+}
+
+@keyframes typeLeft {
+    0%   { transform: rotateZ(0deg); }
+    25%  { transform: rotateZ(7deg); }
+    75%  { transform: rotateZ(-6deg); }
+    100% { transform: rotateZ(0deg); }
+}
+
+@keyframes typeRight {
+    0%   { transform: rotateZ(0deg); }
+    25%  { transform: rotateZ(-6deg); }
+    75%  { transform: rotateZ(7deg); }
+    100% { transform: rotateZ(0deg); }
+}
+
+@keyframes tapWobble {
+    0%   { transform: rotateZ(-0.2deg); }
+    50%  { transform: rotateZ(0.2deg); }
+    100% { transform: rotateZ(-0.2deg); }
+}
+
+@keyframes tapRight {
+    0%   { transform: rotateZ(0deg); }
+    90%  { transform: rotateZ(-6deg); }
+    100% { transform: rotateZ(0deg); }
+}
+
+@keyframes blinktalos {
+    0%   { background-position: -90px -201px; }
+    94%  { background-position: -90px -201px; }
+    98%  { background-position: -90px -228px; }
+    100% { background-position: -90px -201px; }
+}
+
+@keyframes pan {
+    0%   { transform: translateX(-2px); }
+    49%   { transform: translateX(-2px); }
+    50%  { transform: translateX(2px); }
+    99%  { transform: translateX(2px); }
+    100% { transform: translateX(-2px); }
+}

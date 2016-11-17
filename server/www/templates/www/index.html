@@ -1,0 +1,171 @@
+{% extends 'www/base_site.html' %}
+{% load staticfiles %}
+
+{% block content %}
+            <section id="home">
+                <div class="rev_slider_wrapper">
+                    <div class="rev_slider" id="slider5" data-version="5.0">
+                        <ul style="background-color: #45738c;">
+
+                            <li data-transition="scaleleftfromright"
+                                data-easein="default"
+                                data-easeout="default"
+                                data-slotamount="4"
+                                data-masterspeed="600"
+                                data-delay="8000"
+                                data-title="FIRST"
+                            >
+                                <!-- MAIN IMAGE -->
+                                <img src="{% static 'www/img/logo.png' %}"
+                                     alt=""
+                                     data-bgrepeat="no-repeat"
+                                     data-bgparallax="7"
+                                     class="rev-slidebg"
+                                >
+
+                                <!-- LAYER NR. 1 -->
+                                <div class="tp-caption hero-text giant_nocaps rs-parallaxlevel-7"
+                                     data-x="center"
+                                     data-y="center"
+                                     data-transform_idle="o:1;s:1000;"
+                                     data-transform_in="y:-50px;opacity:0;s:1500;e:Power3.easeOut;"
+                                     data-transform_out="opacity:0;sX:0;sY:0;s:2000;e:Power3.easeInOut;"
+                                     data-start="1000">
+                                    <!--FIRST-->
+                                    <img src="{% static 'www/img/first_logo.png' %}"/>
+                                </div>
+
+                                <!-- LAYER NR. 2 -->
+                                <div class="tp-caption rs-parallaxlevel-7"
+                                     data-x="center"
+                                     data-y="center"
+                                     data-voffset="143"
+                                     data-hoffset="0"
+                                     style="z-index: 13; max-width: auto; max-height: auto; white-space: nowrap; padding-top: 15px;">
+                                    <div id="main_content" align="center">
+                                        <a href='#' class='btn btn-lg btn-transparent' data-toggle="modal"
+                                           data-target="#modalRegistration">Register</a>
+                                        <a href='https://github.com/vrtadmin/FIRST' target="_blank"
+                                           class='btn btn-lg btn-color'>Download</a>
+                                    </div>
+                                </div>
+
+
+                            </li>
+
+                        </ul>
+
+                        <div class="local-scroll-no-offset">
+                            <a href="#about" class="scroll-down">
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-wrap intro" id="about">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="text-center">
+                            <div class="wow slideInDown" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <h2 class="intro-heading heading-frame">
+                                    Welcome to First
+                                </h2>
+                            </div>
+                            <div class="container">
+                                <div class="row mt-minus-30">
+
+                                    <div class="col-sm-6 wow slideInLeft" align="left" data-wow-duration="1.2s"
+                                         data-wow-delay="0s">
+                                        <div class="about-description mt-30">
+                                            <h4>About Us</h4>
+                                            <p class="mb-60">
+                                                The Function Identification and Recover Signature Tool (FIRST) developed by
+                                                Talos, is an IDA Pro
+                                                plugin that
+                                                allows reverse engineers to more quickly complete static analysis. It makes
+                                                finding similar
+                                                functions faster and easier by removing the need to synchronize function
+                                                metadata. 
+                                            </p>
+                                            <p>
+                                                FIRST’s extensible framework allows users to submit function metadata to a
+                                                repository and
+                                                search the repository for function metadata similar to the function
+                                            </p>
+                                        </div>
+                                    </div> <!-- end col -->
+
+                                    <div class="col-sm-6 wow slideInRight" align="left" data-wow-duration="1.2s"
+                                         data-wow-delay="0s">
+                                        <div id="skills" class="skills-progress">
+                                            <h4>Goals</h4>
+                                            <p>
+                                                Users can contribute function metadata and search for function metadata
+                                                similar to the function(s) being analyzed in IDA. FIRST’s framework allows
+                                                developers to create new ways to derive similarities between functions.
+                                            </p>
+                                            <ul style="list-style: circle; padding-left: 25px;">
+                                                <li>
+                                                    Save function metadata (name, prototype, and comment)
+
+                                                </li>
+                                                <li>
+                                                    Provide way to find similar functions
+                                                </li>
+                                                <li>
+                                                    Allow users to apply function metadata in IDA Pro
+                                                </li>
+                                                <li>
+                                                    Reduce reverse engineering time
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> <!-- end col -->
+
+                                </div>
+                            </div>
+                            <div class="wow slideInUp" data-wow-duration="1.2s"
+                                 data-wow-delay="0s">
+                                <img src="{% static 'www/img/intro_logo.png' %}" alt=""/>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section> <!-- end intro -->
+
+            <section class="result-boxes">
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="col-lg-6 col-md-12 nopadding wow slideInLeft" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="statistic result-box result-box-second">
+                                <div class="result-wrap clearfix">
+                                    <i class="icon icon-User"></i>
+                                    <span class="timer" data-from="0" data-to="{{ user_num | default:'0' }}"></span>
+                                    <span class="counter-text">Users</span>
+                                </div>
+                            </div>
+                        </div> <!-- end second result box -->
+
+                        <div class="col-lg-6 col-md-12 nopadding wow slideInRight" data-wow-duration="1.2s"
+                             data-wow-delay="0s">
+                            <div class="statistic result-box result-box-third">
+                                <div class="result-wrap clearfix">
+                                    <i class="icon icon-Settings"></i>
+                                    <span class="timer" data-from="0" data-to="{{ function_num | default:'0' }}"></span>
+                                    <span class="counter-text">Functions</span>
+                                </div>
+                            </div>
+                        </div> <!-- end third result box -->
+
+                    </div>
+                </div>
+            </section> <!-- end results-->
+{% endblock %}

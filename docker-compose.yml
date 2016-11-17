@@ -1,0 +1,41 @@
+version: '2'
+services:
+   api:
+      build: .
+      ports:
+         - 80:80
+         - 443:443
+      depends_on:
+         - mongo
+         - mysql
+      environment:
+         - MYSQL_USER=root
+         - MYSQL_PASSWORD=password12345
+         - MYSQL_DATABASE=first_db
+         - MYSQL_HOST=mysql
+         - MYSQL_PORT=3306
+         - MONGO_HOST=mongo
+         - MONGO_PORT=27017
+         - MONGO_NAME=first_db
+         - GOOGLE_SECRET=/usr/local/etc/google_secret.json
+      volumes:
+          - ./data/ssl:/etc/apache2/ssl
+      restart: always
+
+   mongo:
+      image: mongo
+      expose:
+         - 27017
+      volumes:
+         - ./data/mongodb:/data/db
+      restart: always
+   mysql:
+      image: mysql
+      expose:
+         - 3306
+      environment:
+         - MYSQL_ROOT_PASSWORD=password12345
+         - MYSQL_DATABASE=first_db
+      volumes:
+         - ./data/mysql:/var/lib/mysql
+      restart: always

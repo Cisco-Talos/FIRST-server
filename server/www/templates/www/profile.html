@@ -1,0 +1,105 @@
+{% extends 'www/base_site.html' %}
+
+{% block nav_block %}
+<ul class="nav navbar-nav local-scroll-no-offset text-center">
+
+    <li class="active">
+        <a href="{% url 'www:index' %}">Home</a>
+    </li>
+    <li>
+        <a href="#profile">Profile</a>
+    </li>
+    <li>
+        <a href="#requirement">Requirements &amp; Installation</a>
+    </li>
+    <li>
+        <a href="#submit_engine">Submit Engine</a>
+    </li>
+    <li>
+        <a target="_blank" href="https://github.com/vrtadmin/FIRST/releases">Download</a>
+    </li>
+    <li>
+        <a href="{% url 'www:logout' %}">Logout</a>
+    </li>
+
+
+</ul>
+{% endblock %}
+{% block content %}
+    <section class="section-wrap intro" id="profile">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="text-center">
+            <div class="wow slideInDown" data-wow-duration="1.2s"
+                 data-wow-delay="0s">
+              <h2 class="intro-heading heading-frame">
+
+                Welcome <span style="color:#F29614">{{ user.name }}</span>
+
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> <!-- end intro -->
+
+    <section class="result-boxes profile_container">
+      <div class="container-fluid">
+        <div class="row">
+
+          <div class="col-lg-6 col-md-12 nopadding wow slideInDown" data-wow-duration="1.2s"
+               data-wow-delay="0s">
+            <div class="statistic result-box result-box-second">
+              <div class="result-wrap clearfix">
+                <i class="icon icon-Key"></i>
+                <h4>
+                  {{ user.api_key }}
+                </h4>
+                <span class="counter-text">API Key</span>
+              </div>
+            </div>
+          </div> <!-- end second result box -->
+
+          <div class="col-lg-6 col-md-12 nopadding wow slideInRight" data-wow-duration="1.2s"
+               data-wow-delay="0s">
+            <div class="statistic result-box result-box-third">
+              <div class="result-wrap clearfix">
+                <i class="icon icon-Wrench"></i>
+                <h4>
+                  {{ user.handle }}
+                </h4>
+                <span class="counter-text">Handle</span>
+              </div>
+            </div>
+          </div> <!-- end third result box -->
+
+          <div class="col-lg-6 col-md-12 nopadding wow slideInLeft" data-wow-duration="1.2s"
+               data-wow-delay="0s">
+            <div class="statistic result-box result-box-third">
+              <div class="result-wrap clearfix">
+                <i class="icon icon-Star"></i>
+                <h4>
+                  {{ user.rank }}
+                </h4>
+                <span class="counter-text">Karma LVL</span>
+              </div>
+            </div>
+          </div> <!-- end second result box -->
+
+          <div class="col-lg-6 col-md-12 nopadding wow slideInUp" data-wow-duration="1.2s"
+               data-wow-delay="0s">
+            <div class="statistic result-box result-box-second">
+              <div class="result-wrap clearfix">
+                <i class="icon icon-Tag"></i>
+                <h4>
+                  {{ metadata_count | default:'0' }}
+                </h4>
+                <span class="counter-text">MetaData</span>
+              </div>
+            </div>
+          </div> <!-- end third result box -->
+
+        </div>
+      </div>
+    </section> <!-- end results-->
+{% endblock %}
