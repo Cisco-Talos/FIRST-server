@@ -1,6 +1,6 @@
 FROM ubuntu
 RUN apt-get update
-RUN apt-get dist-upgrade
+RUN apt-get -y dist-upgrade
 RUN apt-get install -y python-pip mysql-client libmysqlclient-dev apache2 libapache2-mod-wsgi libapache2-mod-wsgi
 COPY install/requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
