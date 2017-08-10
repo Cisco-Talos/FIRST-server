@@ -63,7 +63,7 @@ class BasicMasking(Document):
 
 class BasicMaskingEngine(AbstractEngine):
     _name = 'BasicMasking'
-    _description = ('Maskes ESP/EBP offsets, calls/jmps offsets, and global '
+    _description = ('Masks ESP/EBP offsets, calls/jmps offsets, and global '
                     'offsets (Intel Only). Requires at least 8 instructions.')
     _required_db_names = ['first_db']
 
