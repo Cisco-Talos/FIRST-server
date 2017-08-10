@@ -1,0 +1,15 @@
+{
+    "secret_key" : "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+
+    "db_engine" : "django.db.backends.mysql",
+    "db_dbname" : "first",
+    "db_user" : "user",
+    "db_password" : "pass",
+    "db_host" : "localhost",
+    "db_port" : 3306,
+
+    "debug" : true,
+    "allowed_hosts" : ["localhost", "testserver"],
+
+    "oauth_path" : "",
+}

@@ -11,9 +11,19 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import json
 
-#   Third Party Modules
-import mongoengine
+#   Read in configuration data
+FIRST_CONFIG_FILE = 'first_config.json'
+CONFIG = {}
+try:
+    config_data = json.load(file(FIRST_CONFIG_FILE))
+    if type(config_data) == dict:
+        CONFIG = config_data
+except IOError as ioe:
+    print '[1st] IOError: {}'.format(ioe)
+except ValueError as ve:
+    print '[1st] ValueError: {}'.format(ve)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,12 +33,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd2nev@620*3vi@qvynch)seb4^pghp=-)aenfs(4%)-k@xqpo9'
+SECRET_KEY = CONFIG.get('secret_key',
+                        'd2nev@620*3vi@qvynch)seb4^pghp=-)aenfs(4%)-k@xqpo9')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = CONFIG.get('debug', True)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = CONFIG.get('allowed_hosts', [])
 
 
 # Application definition
@@ -80,30 +91,16 @@ WSGI_APPLICATION = 'first.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-# MySQL Settings
-_MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-_MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
-_MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'first_db')
-_MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
-_MYSQL_PORT = os.environ.get('MYSQL_PORT', 3306)
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': _MYSQL_DATABASE,
-        'USER': _MYSQL_USER,
-        'PASSWORD': _MYSQL_PASSWORD,
-        'HOST': _MYSQL_HOST,
-        'PORT': _MYSQL_PORT
+        'ENGINE': CONFIG.get('db_engine', 'django.db.backends.mysql'),
+        'NAME': CONFIG.get('db_dbname', 'first_db'),
+        'USER': CONFIG.get('db_user', 'root'),
+        'PASSWORD': CONFIG.get('db_password', ''),
+        'HOST': CONFIG.get('db_host', 'localhost'),
+        'PORT': CONFIG.get('db_port', 3306)
     }
 }
-
-# MongoDB settings
-_MONGODB_HOST = os.environ.get('MONGO_HOST', 'localhost')
-_MONGODB_PORT = int(os.environ.get('MONGO_PORT', 27017))
-_MONGODB_NAME = os.environ.get('MONGO_NAME', 'first_db')
-
-mongoengine.connect(_MONGODB_NAME, host=_MONGODB_HOST, port=_MONGODB_PORT)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -127,19 +124,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = CONFIG.get('language_code', 'en-us')
 
-TIME_ZONE = 'EST'
+TIME_ZONE = CONFIG.get('time_zone', 'EST')
 
-USE_I18N = True
+USE_I18N = CONFIG.get('use_i18n', True)
 
-USE_L10N = True
+USE_L10N = CONFIG.get('use_l10n', True)
 
-USE_TZ = True
+USE_TZ = CONFIG.get('use_tz', True)
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = '/static/'
+STATIC_URL = CONFIG.get('static_url', '/static/')

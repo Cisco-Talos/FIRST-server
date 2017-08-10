@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #
-#   FIRST MongoDB Models
-#   Copyright (C) 2016  Angel M. Villegas
+#   FIRST Django ORM Models
+#   Copyright (C) 2017  Angel M. Villegas
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,17 +17,16 @@
 #   with this program; if not, write to the Free Software Foundation, Inc.,
 #   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#   Requirements
-#   ------------
-#   mongoengine (https://pypi.python.org/pypi/mongoengine/)
-#
 #-------------------------------------------------------------------------------
 
 
 #   Python Modules
 from __future__ import unicode_literals
 import datetime
+
+#   Third Party Modules
 from django.db import models
+from django.utils import timezone
 from django.db.transaction import commit
 
 
@@ -36,12 +35,14 @@ class User(models.Model):
     email = models.CharField(max_length=254)
     handle = models.CharField(max_length=32)
     number = models.IntegerField()
-    created = models.DateTimeField(default=datetime.datetime.utcnow)
+    api_key = models.UUIDField(unique=True)
+    created = models.DateTimeField(default=timezone.now, auto_now_add=True)
     rank = models.BigIntegerField(default=0)
     active = models.BooleanField(default=True)
+
     service = models.CharField(max_length=16)
-    auth_data = models.CharField(max_length=4096)    
-    
+    auth_data = models.CharField(max_length=4096)
+
     @property
     def user_handle(self):
         return '{0.handle}#{0.number:04d}'.format(self)
@@ -53,37 +54,33 @@ class User(models.Model):
             data.update({   'id' : str(self.id),
                             'name' : self.name,
                             'email' : self.email,
+                            'api_key' : self.api_key,
                             'rank' : self.rank,
                             'created' : self.created,
                             'active' : self.active})
         return data
-    
+
     class Meta:
         indexes = [
-            models.Index(fields=['email']),            
+            models.Index(fields=['email']),
+            models.Index(fields=['api_key']),
         ]
         index_together = ("handle", "number")
 
-    
-    
-class API(models.Model):
-    key = models.UUIDField(unique=True)
-    # many to many relationship:
-    user = models.ManyToManyField(User,blank=True)
-    
-    
+
+
 class Engine(models.Model):
     name = models.CharField(max_length=16, unique=True)
     description = models.CharField(max_length=128)
     path = models.CharField(max_length=256)
     obj_name = models.CharField(max_length=32)
-    
-    developer = models.OneToOneField(User)    
+
+    developer = models.ForeignKey(User)
     active = models.BooleanField(default=False)
-    
+
     class Meta:
         indexes = [
-            models.Index(fields=['name']),            
+            models.Index(fields=['name']),
         ]
 
     def dump(self, full=False):
@@ -100,24 +97,24 @@ class Engine(models.Model):
     @property
     def rank(self):
         return len(self.applied)
-    
-class AppliedEngine(models.Model): 
+
+class AppliedEngine(models.Model):
     engine_id = models.ForeignKey(Engine)
-    sample_id = models.OneToOneField('Sample') 
+    sample_id = models.OneToOneField('Sample')
     user_id =   models.OneToOneField(User)
     engine_metadata_id  = models.BigIntegerField();
-    
+
     class Meta:
-        unique_together = ("sample_id", "user_id", "engine_metadata_id")  
+        unique_together = ("sample_id", "user_id", "engine_metadata_id")
 
 class Metadata(models.Model):
-    user = models.OneToOneField(User ) 
-    
+    user = models.OneToOneField(User )
+
     class Meta:
         indexes = [
-            models.Index(fields=['user']),            
+            models.Index(fields=['user']),
         ]
-        
+
     def dump(self, full=False):
         data = {'creator' : User.objects.filter(metadata_id = self.id),
                 'name' : MetaDataName.objects.filter(metadata_id = self.id).first(),
@@ -131,7 +128,7 @@ class Metadata(models.Model):
             committed = MetaDataCommited.objects.filter(metadata_id = self.id)
             prototype = MetaDataPrototype.objects.filter(metadata_id = self.id);
             comment = MetaDataComment.objects.filter(metadata_id = self.id);
-            
+
             for i in xrange(len(name) - 1, -1, -1):
                 #   Convert back with:
                 #   datetime.datetime.strptime(<dt>, '%Y-%m-%dT%H:%M:%S.%f')
@@ -146,11 +143,11 @@ class Metadata(models.Model):
     def has_changed(self, name, prototype, comment):
         if (not self.name) or (not self.prototype) or (not comment):
             return True
-        
+
         actualName = MetaDataName.objects.filter(metadata_id = self.id).first()
         actualPrototype = MetaDataPrototype.objects.filter(metadata_id = self.id).first()
         actualComment = MetaDataComment.objects.filter(metadata_id = self.id).first();
-        
+
         if ((actualName.name != name)
             or (actualPrototype.prototype != prototype)
             or (actualComment.comment != comment)):
@@ -162,26 +159,26 @@ class Metadata(models.Model):
     def rank(self):
         return len(self.applied)
 
-class AppliedMetaData(models.Model): 
+class AppliedMetaData(models.Model):
     metadata_id = models.ForeignKey(Engine)
-    sample_id = models.OneToOneField('Sample') 
+    sample_id = models.OneToOneField('Sample')
     user_id =   models.OneToOneField(User)
     engine_metadata_id  = models.BigIntegerField();
     class Meta:
-        unique_together = ("metadata_id", "sample_id", "user_id") 
-    
+        unique_together = ("metadata_id", "sample_id", "user_id")
+
 class MetaDataName(models.Model):
     name = models.CharField(max_length=128)
     models.ForeignKey(Metadata)
-    
+
 class MetaDataPrototype(models.Model):
     prototype = models.CharField(max_length=256)
     models.ForeignKey(Metadata)
-    
+
 class MetaDataComment(models.Model):
     comment = models.CharField(max_length=128)
     models.ForeignKey(Metadata)
-    
+
 class MetaDataCommited(models.Model):
     committed = models.DateTimeField(default=datetime.datetime.utcnow, blank=True)
     models.ForeignKey(Metadata)
@@ -205,7 +202,7 @@ class Function(models.Model):
 class FunctionApis(models.Model):
     api = models.CharField(max_length=64)
     models.ForeignKey(Function)
-    
+
 
 class Sample(models.Model):
     md5 = models.CharField(max_length=32)
@@ -218,7 +215,7 @@ class Sample(models.Model):
 
     class Meta:
         index_together = ['md5', 'crc32']
-    
+
     def dump(self):
         data = {'md5' : self.md5, 'crc32' : self.crc32,
                 'seen_by' : [str(x.id) for x in User.objects.filter(sample_id = self.id)],
@@ -238,7 +235,7 @@ class MnemonicHash(models.Model):
 
     class Meta:
         index_together = ('sha256', 'architecture')
-        
+
     def dump(self):
         return {'sha256' : self.sha256,
                 'architecture' : self.architecture,
@@ -246,6 +243,3 @@ class MnemonicHash(models.Model):
 
     def function_list(self):
         return [str(x) for x in Function.objects.filter(MnemonicHash_id = self.id)]
-
-
-
