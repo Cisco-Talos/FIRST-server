@@ -38,9 +38,29 @@ from first.engines.results import FunctionResult
 #   Third Party Modules
 from bson.objectid import ObjectId
 from distorm3 import DecomposeGenerator, Decode32Bits, Decode64Bits, Decode16Bits
-from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
-from mongoengine import Document, StringField, ListField, ObjectIdField
+from django.db import models
 
+
+class MnemonicHash(models.Model):
+    sha256 = models.CharField(max_length=64)
+    architecture = models.CharField(max_length=64)
+    functions = model.ManyToManyField(MnemonicHashFunctions)
+
+    class Meta:
+        index_together = ('sha256', 'architecture')
+
+    def dump(self):
+        return {'sha256' : self.sha256,
+                'architecture' : self.architecture,
+                'functions' : self.functions.all()}
+
+    def function_list(self):
+        return [str(x) for x in self.functions.all()]
+
+class MnemonicHashFunctions(models.Model):
+    func = models.BigIntegerField()
+
+'''
 class MnemonicHash(Document):
     sha256 = StringField(max_length=64, required=True)
     architecture = StringField(max_length=64, required=True)
@@ -57,7 +77,7 @@ class MnemonicHash(Document):
 
     def function_list(self):
         return [str(x) for x in self.functions]
-
+'''
 
 class MnemonicHashEngine(AbstractEngine):
     _name = 'MnemonicHash'

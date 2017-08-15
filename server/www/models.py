@@ -27,7 +27,6 @@ import datetime
 #   Third Party Modules
 from django.db import models
 from django.utils import timezone
-from django.db.transaction import commit
 
 
 class User(models.Model):
@@ -36,7 +35,7 @@ class User(models.Model):
     handle = models.CharField(max_length=32)
     number = models.IntegerField()
     api_key = models.UUIDField(unique=True)
-    created = models.DateTimeField(default=timezone.now, auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     rank = models.BigIntegerField(default=0)
     active = models.BooleanField(default=True)
 
@@ -61,12 +60,12 @@ class User(models.Model):
         return data
 
     class Meta:
+        db_table = 'User'
         indexes = [
             models.Index(fields=['email']),
             models.Index(fields=['api_key']),
         ]
         index_together = ("handle", "number")
-
 
 
 class Engine(models.Model):
@@ -75,151 +74,153 @@ class Engine(models.Model):
     path = models.CharField(max_length=256)
     obj_name = models.CharField(max_length=32)
 
-    developer = models.ForeignKey(User)
+    developer = models.ForeignKey('User')
     active = models.BooleanField(default=False)
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['name']),
-        ]
+    #@property
+    #def rank(self):
+    #    return len(self.applied)
 
     def dump(self, full=False):
         data = {'name' : self.name,
                 'description' : self.description,
                 'rank' : self.rank,
-                'developer' : Engine.objects.filter(engine_id = self.id)}
+                'developer' : self.developer.user_handle}
 
         if full:
             data.update({'path' : self.path})
 
         return data
 
-    @property
-    def rank(self):
-        return len(self.applied)
-
-class AppliedEngine(models.Model):
-    engine_id = models.ForeignKey(Engine)
-    sample_id = models.OneToOneField('Sample')
-    user_id =   models.OneToOneField(User)
-    engine_metadata_id  = models.BigIntegerField();
-
     class Meta:
-        unique_together = ("sample_id", "user_id", "engine_metadata_id")
-
-class Metadata(models.Model):
-    user = models.OneToOneField(User )
-
-    class Meta:
+        db_table = 'Engine'
         indexes = [
-            models.Index(fields=['user']),
+            models.Index(fields=['name']),
         ]
 
-    def dump(self, full=False):
-        data = {'creator' : User.objects.filter(metadata_id = self.id),
-                'name' : MetaDataName.objects.filter(metadata_id = self.id).first(),
-                'prototype' : MetaDataPrototype.objects.filter(metadata_id = self.id).first(),
-                'comment' : MetaDataComment.objects.filter(metadata_id = self.id).first(),
-                'rank' : len(self.applied)}
 
-        if full:
-            data['history'] = []
-            name = MetaDataName.objects.filter(metadata_id = self.id)
-            committed = MetaDataCommited.objects.filter(metadata_id = self.id)
-            prototype = MetaDataPrototype.objects.filter(metadata_id = self.id);
-            comment = MetaDataComment.objects.filter(metadata_id = self.id);
+#   TODO: Create scheme for tracking applied metadata for engines
+#
+#class AppliedEngine(models.Model):
+#    engine_id = models.ForeignKey(Engine)
+#    sample_id = models.ForeignKey(Sample)
+#    user_id =   models.ForeignKey(User)
+#    engine_metadata_id  = models.BigIntegerField();
+#
+#    class Meta:
+#        db_table = 'AppliedEngine'
+#        unique_together = ("sample_id", "user_id", "engine_metadata_id")
 
-            for i in xrange(len(name) - 1, -1, -1):
-                #   Convert back with:
-                #   datetime.datetime.strptime(<dt>, '%Y-%m-%dT%H:%M:%S.%f')
-                commit = committed[i].isoformat()
-                data['history'].append({'name' : name[i],
-                                        'prototype' : prototype[i],
-                                        'comment' : comment[i],
-                                        'committed' : commit})
+class AppliedMetadata(models.Model):
+    metadata_id = models.ForeignKey('Metadata')
+    sample_id = models.OneToOneField('Sample')
+    user_id =   models.OneToOneField('User')
 
-        return data
+    class Meta:
+        db_table = 'AppliedMetadata'
+        unique_together = ("metadata_id", "sample_id", "user_id")
+
+
+class MetadataDetails(models.Model):
+    name = models.CharField(max_length=256)
+    prototype = models.CharField(max_length=256)
+    comment = models.CharField(max_length=256)
+    committed = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'MetadataDetails'
+
+
+class Metadata(models.Model):
+    user = models.ForeignKey('User')
+    details = models.ManyToManyField('Metadatadetails')
+    applied = models.ManyToManyField('AppliedMetadata')
+
+    @property
+    def rank(self):
+        return self.applied.count()
 
     def has_changed(self, name, prototype, comment):
-        if (not self.name) or (not self.prototype) or (not comment):
+        if not self.details.exists():
             return True
 
-        actualName = MetaDataName.objects.filter(metadata_id = self.id).first()
-        actualPrototype = MetaDataPrototype.objects.filter(metadata_id = self.id).first()
-        actualComment = MetaDataComment.objects.filter(metadata_id = self.id).first();
-
-        if ((actualName.name != name)
-            or (actualPrototype.prototype != prototype)
-            or (actualComment.comment != comment)):
+        latest = self.details.latest('committed')
+        if ((latest.name != name)
+            or (latest.prototype != prototype)
+            or (latest.comment != comment)):
             return True
 
         return False
 
-    @property
-    def rank(self):
-        return len(self.applied)
+    def dump(self, full=False):
+        data = {'creator' : self.user.user_handle}
+        latest_details = self.details.latest('committed')
+        data.update({
+            'name' : latest_details.name,
+            'prototype' : latest_details.prototype,
+            'comment' : latest_details.comment,
+            'rank' : AppliedMetadata(metadata_id=latest_details.id).count()
+        })
 
-class AppliedMetaData(models.Model):
-    metadata_id = models.ForeignKey(Engine)
-    sample_id = models.OneToOneField('Sample')
-    user_id =   models.OneToOneField(User)
-    engine_metadata_id  = models.BigIntegerField();
+        if full:
+            data['history'] = []
+            for d in xrange(self.details.count()):
+                #   Convert committed time back with:
+                #   datetime.datetime.strptime(<dt>, '%Y-%m-%dT%H:%M:%S.%f')
+                data['history'].append({'name' : d.name,
+                                        'prototype' : d.prototype,
+                                        'comment' : d.comment,
+                                        'committed' : d.commit.isoformat()})
+
+        return data
+
     class Meta:
-        unique_together = ("metadata_id", "sample_id", "user_id")
+        db_table = 'Metadata'
+        indexes = [models.Index(fields=['user'])]
 
-class MetaDataName(models.Model):
-    name = models.CharField(max_length=128)
-    models.ForeignKey(Metadata)
 
-class MetaDataPrototype(models.Model):
-    prototype = models.CharField(max_length=256)
-    models.ForeignKey(Metadata)
+class FunctionApis(models.Model):
+    api = models.CharField(max_length=64)
 
-class MetaDataComment(models.Model):
-    comment = models.CharField(max_length=128)
-    models.ForeignKey(Metadata)
+    class Meta:
+        db_table = 'FunctionApis'
 
-class MetaDataCommited(models.Model):
-    committed = models.DateTimeField(default=datetime.datetime.utcnow, blank=True)
-    models.ForeignKey(Metadata)
 
 class Function(models.Model):
     sha256 = models.CharField(max_length=64)
-    opcodes = models.BinaryField
-    metadata = models.ForeignKey(Metadata)
-    mnemonic_hash = models.ForeignKey('MnemonicHash')
-    #  Return value from idaapi.get_file_type_name()
+    opcodes = models.BinaryField()
+    apis = models.ManyToManyField('FunctionApis')
+    metadata = models.ManyToManyField('Metadata')
     architecture = models.CharField(max_length=64)
 
     def dump(self):
         return {'id' : self.id,
                 'opcodes' : self.opcodes,
-                'apis'  : self.functionapis_set.all(),
-                'metadata' : [str(x.api) for x in Metadata.objects.filter(function_id = self.id)],
+                'apis'  : [str(x.api) for x in self.apis.all()],
+                'metadata' : [str(x.api) for x in self.metadata.all()],
                 'architecture' : self.architecture,
                 'sha256' : self.sha256}
 
-class FunctionApis(models.Model):
-    api = models.CharField(max_length=64)
-    models.ForeignKey(Function)
+    class Meta:
+        db_table = 'Function'
 
 
 class Sample(models.Model):
     md5 = models.CharField(max_length=32)
     crc32 = models.IntegerField()
-    sha1 = models.CharField(max_length=40)
-    sha256 = models.CharField(max_length=64)
-    seen_by = models.ManyToManyField( User, blank=True)
-    functions = models.ManyToManyField( Function, blank=True)
-    last_seen = models.DateTimeField(default=datetime.datetime.utcnow, blank=True)
+    sha1 = models.CharField(max_length=40, null=True, blank=True)
+    sha256 = models.CharField(max_length=64, null=True, blank=True)
+    seen_by = models.ManyToManyField('User')
+    functions = models.ManyToManyField('Function')
+    last_seen = models.DateTimeField(default=timezone.now, blank=True)
 
     class Meta:
         index_together = ['md5', 'crc32']
 
     def dump(self):
         data = {'md5' : self.md5, 'crc32' : self.crc32,
-                'seen_by' : [str(x.id) for x in User.objects.filter(sample_id = self.id)],
-                'functions' : [str(x.id) for x in Function.objects.filter(sample_id = self.id)]}
+                'seen_by' : [str(x.id) for x in self.seen_by.all()],
+                'functions' : [str(x.id) for x in self.functions.all()]}
 
         if 'sha1' in self:
             data['sha1'] = self.sha1
@@ -228,18 +229,3 @@ class Sample(models.Model):
             data['sha256'] = self.sha256
 
         return data
-
-class MnemonicHash(models.Model):
-    sha256 = models.CharField(max_length=64)
-    architecture = models.CharField(max_length=64)
-
-    class Meta:
-        index_together = ('sha256', 'architecture')
-
-    def dump(self):
-        return {'sha256' : self.sha256,
-                'architecture' : self.architecture,
-                'functions' : self.function_set.all()}
-
-    def function_list(self):
-        return [str(x) for x in Function.objects.filter(MnemonicHash_id = self.id)]
