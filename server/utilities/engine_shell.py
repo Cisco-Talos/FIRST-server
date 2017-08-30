@@ -31,9 +31,10 @@ sys.path.append(os.path.abspath('..'))
 
 #   FIRST Modules
 import first.settings
-from first.models import Engine, User
-from first.engines import AbstractEngine
-from first import DBManager, EngineManager
+import first.wsgi
+from first_core.models import Engine, User
+from first_core.engines import AbstractEngine
+from first_core import DBManager, EngineManager
 
 class EngineCmd(Cmd):
 
@@ -95,7 +96,7 @@ class RootCmd(EngineCmd):
             print 'No engines are currently installed'
             return
 
-        for engine in Engine.objects:
+        for engine in Engine.objects.all():
             name = engine.name
             description = engine.description
             print '+{}+{}+'.format('-' * 18, '-' * 50)
@@ -139,7 +140,7 @@ class RootCmd(EngineCmd):
 
         try:
             path, obj_name, email = line.split(' ')
-            developer = User.objects(email=email).get()
+            developer = User.objects.get(email=email)
 
             __import__(path)
             module = sys.modules[path]
@@ -160,9 +161,11 @@ class RootCmd(EngineCmd):
                 return
 
             e.install()
-            engine = Engine(name=e.name, description=e.description, path=path,
-                            obj_name=obj_name, developer=developer, active=True)
-            engine.save()
+            engine = Engine.objects.create( name=e.name,
+                                            description=e.description,
+                                            path=path,
+                                            obj_name=obj_name,
+                                            developer=developer, active=True)
             print 'Engine added to FIRST'
             return
 
@@ -286,7 +289,7 @@ class RootCmd(EngineCmd):
             print 'The below errors occured:\n{}'.format('\n  '.join(errors))
 
     def _get_db_engine_obj(self, name):
-        engine = Engine.objects(name=name)
+        engine = Engine.objects.filter(name=name)
         if not engine:
             print 'Unable to locate Engine "{}"'.format(name)
             return
@@ -294,7 +297,7 @@ class RootCmd(EngineCmd):
         if len(engine) > 1:
             print 'More than one engine "{}" exists'.format(name)
             for e in engine:
-                print ' - {}'.format(e.name)
+                print ' - {}: {}'.format(e.name, e.description)
 
             return
 

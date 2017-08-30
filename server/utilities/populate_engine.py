@@ -27,7 +27,7 @@
 from argparse import ArgumentParser
 
 #   FIRST Modules
-from ..app.first import EngineManager, DBManager
+from first_core import EngineManager, DBManager
 
 def main():
     global total, completed, operation_complete

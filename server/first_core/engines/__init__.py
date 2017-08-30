@@ -15,9 +15,9 @@ import re
 import sys
 
 #   First Modules
-from first.error import FIRSTError
-from first.dbs import FIRSTDBManager
-from first.engines.results import Result
+from first_core.error import FIRSTError
+from first_core.dbs import FIRSTDBManager
+from first_core.engines.results import Result
 
 #   Third Party Modules
 from bson.objectid import ObjectId
