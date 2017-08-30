@@ -38,8 +38,8 @@ from django.urls import reverse
 
 #   FIRST Modules
 #   TODO: Use DBManager to get user objects and do User operations
-from first.models import User
-from first.error import FIRSTError
+from first_core.models import User
+from first_core.error import FIRSTError
 
 #   Thirdy Party
 import httplib2
@@ -57,7 +57,7 @@ class FIRSTAuthError(FIRSTError):
 
 
 def verify_api_key(api_key):
-    users = User.objects(api_key=api_key)
+    users = User.objects.filter(api_key=api_key)
     if not users:
         return None
 

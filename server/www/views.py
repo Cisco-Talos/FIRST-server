@@ -9,8 +9,8 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 
 
 #   FIRST Modules
-from www.models import Function, User
-from first.auth import Authentication, require_login, FIRSTAuthError
+from first_core.models import Function, User
+from first_core.auth import Authentication, require_login, FIRSTAuthError
 
 def handler404(request):
     return render(request, 'www/404.html', None)

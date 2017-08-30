@@ -14,7 +14,9 @@ import os
 import json
 
 #   Read in configuration data
-FIRST_CONFIG_FILE = 'first_config.json'
+FIRST_CONFIG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                '..',
+                                'first_config.json')
 CONFIG = {}
 try:
     config_data = json.load(file(FIRST_CONFIG_FILE))
