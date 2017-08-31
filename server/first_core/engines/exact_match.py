@@ -39,7 +39,7 @@ class ExactMatchEngine(AbstractEngine):
         '''
         pass
 
-    def _scan(self, opcodes, architecture, apis):
+    def _scan(self, opcodes, architecture, apis, disassembly):
         '''Returns List of FunctionResults'''
 
         db = self._dbs['first_db']

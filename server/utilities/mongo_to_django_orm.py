@@ -37,11 +37,6 @@ from argparse import ArgumentParser
 from pprint import pprint
 import gc
 
-#   Add app package to sys path
-#sys.path.append(os.path.abspath('..'))
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'first.settings'
-
-
 #   FIRST Modules
 import first_core.models as ORM
 
@@ -80,7 +75,6 @@ def migrate_functions(skip, limit):
     for f in Function.objects.skip(skip).limit(limit).select_related(3):
         function, created = ORM.Function.objects.get_or_create(**f.dump())
         #   Convert Functions
-        #migrate_function_for_sample(sample, s)
         if created:
             #   Add APIs to function
             migrate_apis(function, f)
@@ -105,55 +99,11 @@ def _mf():
     for i in xrange(0, Function.objects.count(), 1000):
         print '--{}'.format(i)
         migrate_functions(i, 1000)
-        #migfunc(Function.objects.exclude('metadata').all()[i:i+1000])
 
         if i % 20000 == 0:
             info()
             gc.collect()
             info()
-
-def migfunc(qs):
-    #info()
-    #functions = {}
-    for f in qs:
-        function, created = ORM.Function.objects.get_or_create(**f.dump())
-        #   Convert APIs
-        if created:
-            #   Add APIs to function
-            migrate_apis(function, f)
-
-            #   Add to samples
-            for s in Sample.objects.only('md5', 'crc32').filter(functions=f.id):
-                sample = ORM.Sample.objects.get(md5=s.md5, crc32=s.crc32)
-                sample.functions.add(function)
-
-            #   Add metadata assocaited with the function
-            #migrate_metadata(function, f)
-    #gc.collect()
-    #info()
-
-def migrate_function_for_sample(sample, s):
-    print '{} - {}'.format(s.md5, len(s.functions))
-    info()
-    for f in s.functions:
-        if type(f) != Function:
-            print 'Abandoned object: {}'.format(f)
-            continue
-        #info()
-        #pprint(f.dump())
-        function, created = ORM.Function.objects.get_or_create(**f.dump())
-        sample.functions.add(function)
-
-        if created:
-            #   Convert APIs
-            migrate_apis(function, f)
-
-            #   Convert Metadata
-            migrate_metadata(function, f, sample)
-
-
-    gc.collect()
-    info()
 
 def migrate_apis(function, f):
     for a in f.apis:
@@ -186,19 +136,34 @@ def migrate_metadata(function, f):
 
 def main(args):
     pass_prompt = 'Enter MongoDB password for {}: '.format(args.user)
-    mongoengine.connect(args.d,
-                        host=args.host,
-                        port=args.port,
-                        user=args.user,
+    mongoengine.connect(args.mongo_db,
+                        host=args.mongo_host,
+                        port=args.mongo_port,
+                        user=args.mongo_user,
                         password=getpass(pass_prompt))
     #   Convert User
+    print ' +  Adding Users'
+    start = time.time()
     migrate_users()
+    print '[+] Users Added ({} s)'.format(time.time() - start)
 
     #   Convert Engine
+    print ' +  Adding Engines'
+    start = time.time()
     migrate_engines()
+    print '[+] Adding Engines ({} s)'.format(time.time() - start)
 
     #   Convert Samples
+    print ' +  Adding Samples'
+    start = time.time()
     migrate_samples()
+    print '[+] Adding Samples ({} s)'.format(time.time() - start)
+
+    #   Convert Functions and their Metadata
+    print ' +  Adding Functions & Metadata'
+    start = time.time()
+    _mf()
+    print '[+] Adding Functions & Metadata ({} s)'.format(time.time() - start)
 
 
 
@@ -276,7 +241,6 @@ class Metadata(EmbeddedDocument):
                 'prototype' : self.prototype[i],
                 'comment' : self.comment[i]} for i in xrange(len(self.name))]
 
-
 #   Use bson.Binary to insert binary data
 class Function(Document):
     sha256 = StringField(max_length=64)
@@ -325,23 +289,9 @@ if __name__ == '__main__':
     ))
 
     #   Arguments
-    parser.add_argument('--mongo-host', '-h', help='The MongoDB host')
+    parser.add_argument('--mongo-host', '--host', help='The MongoDB host')
     parser.add_argument('--mongo-port', '-p', help='The MongoDB port', type=int)
     parser.add_argument('--mongo-user', '-u', help='The MongoDB user')
     parser.add_argument('--mongo-db', '-d', help='The MongoDB db name')
 
-#   TODO: remove
-mongoengine.connect('beta')
-print ' +  Adding Users'
-start = time.time()
-migrate_users()
-print '[+] Users Added ({} s)'.format(time.time() - start)
-print ' +  Adding Samples'
-start = time.time()
-migrate_samples()
-print '[+] Adding Samples ({} s)'.format(time.time() - start)
-print ' +  Adding Functions & Metadata'
-start = time.time()
-#migrate_functions()
-_mf()
-print '[+] Adding Functions & Metadata ({} s)'.format(time.time() - start)
+    main(parser.parse_args())

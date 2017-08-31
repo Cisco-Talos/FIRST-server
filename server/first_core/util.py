@@ -44,10 +44,15 @@ def make_id(flags, metadata=0, engine=0):
 
 
 def parse_id(_id):
-    if len(_id) != 26:
+    if type(_id) in [str, unicode]:
+        if len(_id) != 26:
+            return (None, None, None)
+
+        _id = int(_id, 16)
+
+    elif type(id) not in [int, long]:
         return (None, None, None)
 
-    _id = int(_id, 16)
     flag = _id >> (8 * 12)
     engine_data = (_id >> (8 * 8)) & (0xFFFFFFFF)
     metadata_id = _id & 0xFFFFFFFFFFFFFFFF
