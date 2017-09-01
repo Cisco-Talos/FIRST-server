@@ -246,7 +246,7 @@ class RootCmd(EngineCmd):
         engines = []
         for engine_name in populate_engines:
             if engine_name not in all_engines:
-                print '[Error] Engine "{}" is not installed'
+                print '[Error] Engine "{}" is not installed'.format(engine_name)
                 continue
 
             engines.append(all_engines[engine_name])

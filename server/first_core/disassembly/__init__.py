@@ -15,7 +15,7 @@ arch_mapping = {
     'intel16' : (CS_ARCH_X86, CS_MODE_16),
     'sysz' : (CS_ARCH_SYSZ, None),
     'arm32' : (CS_ARCH_ARM, CS_MODE_ARM),
-    'intel32' : (CS_ARCH_X86, CS_MODE_ARM),
+    'intel32' : (CS_ARCH_X86, CS_MODE_32),
     'intel64' : (CS_ARCH_X86, CS_MODE_64),
     'sparc' : (CS_ARCH_SPARC, None),
     'arm64' : (CS_ARCH_ARM64, CS_MODE_ARM),
@@ -59,6 +59,48 @@ invalid_mapping = {
     'mips' : MIPS_OP_INVALID, 'mips64' : MIPS_OP_INVALID
 }
 
+_call_mapping = {
+    'ppc' : [],
+    'sysz' : [],
+    'x86' : [X86_INS_CALL],
+    'sysz' : [],
+    'sparc' : [],
+    'arm' : [],
+    'arm64' : [],
+    'mips' : []
+}
+call_mapping = {
+    'ppc' :  _call_mapping['ppc'],
+    'ppc32' : _call_mapping['ppc'],
+    'ppc64' : _call_mapping['ppc'],
+    'sysz' : _call_mapping['sysz'],
+    'intel16' : _call_mapping['x86'],
+    'intel32' : _call_mapping['x86'],
+    'intel64' : _call_mapping['x86'],
+    'sparc' : _call_mapping['sparc'],
+    'arm32' : _call_mapping['arm'], 'arm64' : _call_mapping['arm64'],
+    'mips' : _call_mapping['mips'], 'mips64' : _call_mapping['mips']
+}
+
+_jump_mapping = {
+    'x86' : [   X86_INS_JA, X86_INS_JAE, X86_INS_JB, X86_INS_JBE, X86_INS_JCXZ,
+                X86_INS_JE, X86_INS_JECXZ, X86_INS_JG, X86_INS_JGE, X86_INS_JL,
+                X86_INS_JLE, X86_INS_JMP, X86_INS_JNE, X86_INS_JNO, X86_INS_JNP,
+                X86_INS_JNS, X86_INS_JO, X86_INS_JP, X86_INS_JRCXZ, X86_INS_JS,
+                X86_INS_LJMP]
+}
+jump_mapping = {
+    'intel16' : _jump_mapping['x86'],
+    'intel32' : _jump_mapping['x86'],
+    'intel64' : _jump_mapping['x86']
+}
+
+stack_offsets = {
+    'intel16' : [X86_REG_SP],
+    'intel32' : [X86_REG_EBP, X86_REG_ESP],
+    'intel64' : [X86_REG_RSP]
+}
+
 
 class Disassembly(object):
     def __init__(self, architecture, code):
@@ -73,9 +115,11 @@ class Disassembly(object):
         if architecture in arch_mapping:
             arch, mode = arch_mapping[architecture]
             self.md = Cs(arch, mode)
-            self.md.details = True
+            self.md.detail = True
             self.iterator = self.md.disasm(self.code, 0)
             self.valid = True
+
+
 
     def instructions(self):
         #   When first called function will return cached instructions
@@ -83,20 +127,25 @@ class Disassembly(object):
             yield self.data[i]
 
         #   Then iterate through non-cached instructions
-        if not self.iterator:
+        if self.iterator:
             for i in self.iterator:
                 self.data.append(i)
                 yield i
 
             self.iterator = None
 
-    def _check_mapping(self, mapping, operand):
-        if ((not hasattr(operand, 'type'))
+
+    def _check_mapping(self, mapping, operand, attr='type', equal=True):
+        if ((not hasattr(operand, attr))
         or (self.architecture not in mapping)):
             False
 
-        return operand.type == mapping[self.architecture]
+        if equal:
+            return getattr(operand, attr) == mapping[self.architecture]
 
+        return getattr(operand, attr) in mapping[self.architecture]
+
+    #   Operand Related Functionality
     def is_op_reg(self, operand):
         return self._check_mapping(reg_mapping, operand)
 
@@ -108,3 +157,16 @@ class Disassembly(object):
 
     def is_op_invalid(self, operand):
         return self._check_mapping(invalid_mapping, operand)
+
+    def is_stack_offset(self, operand):
+        if not hasattr(operand, 'mem'):
+            return False
+        return self._check_mapping(stack_offsets, operand.mem, 'base', False)
+
+
+    #   Instruction Related functionality
+    def is_call(self, instr):
+        return self._check_mapping(call_mapping, instr, 'id', False)
+
+    def is_jump(self, instr):
+        return self._check_mapping(jump_mapping, instr, 'id', False)
