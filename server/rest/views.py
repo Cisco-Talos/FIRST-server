@@ -218,7 +218,7 @@ def metadata_add(request, md5_hash, crc32, user):
         f = functions[client_key]
 
         #   Check if the id sent back is from an engine, if so skip it
-        if (('id' in f) and (f['id']) and not is_engine_metadata(f['id'])):
+        if (('id' in f) and (f['id']) and is_engine_metadata(f['id'])):
             continue;
 
         function = db.get_function(create=True, **f)
@@ -238,14 +238,14 @@ def metadata_add(request, md5_hash, crc32, user):
                                     'function in FIRST')})
 
         #   The '0' indicated the metadata_id is from a user.
-        print metadata_id
-        results[client_key] = make_id(0, metadata=metadata_id)
+        _id = make_id(0, metadata=metadata_id)
+        results[client_key] = _id
 
         #   Set the user as applying the metadata
-        db.applied(sample, user, metadata_id)
+        db.applied(sample, user, _id)
 
         #   Send opcode to EngineManager
-        EngineManager.add(function.dump())
+        EngineManager.add(function.dump(True))
 
     return HttpResponse(json.dumps({'failed' : False, 'results' : results}))
 
@@ -296,7 +296,6 @@ def metadata_history(request, user):
         return render(request, 'rest/error_json.html',
                         {'msg' : 'Exceeded max bulk request'})
 
-    print metadata
     if None in map(VALIDATE_IDS, metadata):
         return render(request, 'rest/error_json.html',
                         {'msg' : 'Invalid metadata id'})

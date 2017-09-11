@@ -75,7 +75,7 @@ def require_apikey(view_function):
         if key:
             user = verify_api_key(key)
             del kwargs['api_key']
-            if user:
+            if user and user.active:
                 kwargs['user'] = user
                 return view_function(*args, **kwargs)
 
