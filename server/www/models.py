@@ -71,7 +71,7 @@ class User(models.Model):
 
 class Engine(models.Model):
     name = models.CharField(max_length=16, unique=True)
-    description = models.CharField(max_length=128)
+    description = models.CharField(max_length=256)
     path = models.CharField(max_length=256)
     obj_name = models.CharField(max_length=32)
 
@@ -201,10 +201,16 @@ class Function(models.Model):
     metadata = models.ManyToManyField('Metadata')
     architecture = models.CharField(max_length=64)
 
-    def dump(self):
-        return {'opcodes' : self.opcodes,
+    def dump(self, full=False):
+        data = {'opcodes' : self.opcodes,
                 'architecture' : self.architecture,
                 'sha256' : self.sha256}
+
+        if full:
+            data['apis'] = [x['api'] for x in self.apis.values('api')]
+            data['id'] = self.id
+
+        return data
 
     class Meta:
         db_table = 'Function'

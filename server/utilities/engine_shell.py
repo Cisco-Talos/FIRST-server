@@ -30,11 +30,15 @@ from argparse import ArgumentParser
 sys.path.append(os.path.abspath('..'))
 
 #   FIRST Modules
-import first.settings
 import first.wsgi
-from first_core.models import Engine, User
+import first.settings
 from first_core.engines import AbstractEngine
+from first_core.disassembly import Disassembly
 from first_core import DBManager, EngineManager
+from first_core.models import Engine, User, Function
+
+#   Third Party Modules
+from django.core.paginator import Paginator
 
 class EngineCmd(Cmd):
 
@@ -242,7 +246,7 @@ class RootCmd(EngineCmd):
         engines = []
         for engine_name in populate_engines:
             if engine_name not in all_engines:
-                print '[Error] Engine "{}" is not installed'
+                print '[Error] Engine "{}" is not installed'.format(engine_name)
                 continue
 
             engines.append(all_engines[engine_name])
@@ -252,7 +256,7 @@ class RootCmd(EngineCmd):
             return
 
         print 'Starting to populate engines:\n-\t{}'.format('\n-\t'.join([e.name for e in engines]))
-        functions = db.get_all_functions()
+        functions = db.get_all_functions().order_by('pk')
         total = functions.count()
 
         msg = ' [Status] {0:.2f}% Completed ({1} out of {2})\r'
@@ -261,12 +265,16 @@ class RootCmd(EngineCmd):
 
         offset = 0
         limit = 500
-        for j in xrange(0, total, limit):
-            functions = db.get_all_functions().skip(j).limit(limit)
+        paginator = Paginator(functions, 100)
+        for j in paginator.page_range:
+            functions = paginator.page(j)
 
             for function in functions:
-                details = function.dump()
-                del details['metadata']
+                details = function.dump(True)
+
+                dis = Disassembly(details['architecture'], details['opcodes'])
+                if dis:
+                    details['disassembly'] = dis
 
                 for engine in engines:
                     try:

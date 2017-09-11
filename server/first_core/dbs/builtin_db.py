@@ -224,12 +224,9 @@ class FIRSTDB(AbstractDB):
 
         #   Check to see if user already has metadata associated with the sample
         metadata = None
-        print function.id
-        print user.id
         if Function.objects.filter(pk=function.id, metadata__user=user).count():
             #   Metadata already exists
             metadata = Metadata.objects.get(function=function, user=user)
-
         else:
             metadata = Metadata.objects.create(user=user)
             function.metadata.add(metadata)
