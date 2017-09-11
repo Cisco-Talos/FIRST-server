@@ -20,8 +20,7 @@ urlpatterns = [
         views.metadata_unapplied, name='metadata_unapplied'),
     url(r'^metadata/get/(?i)(?P<api_key>[A-F\d]{8}\-(?:[A-F\d]{4}\-){3}[A-F\d]{12})$',
         views.metadata_get, name='metadata_get'),
-    #   TODO: migrate to ids with 25 characters
-    url(r'^metadata/delete/(?i)(?P<api_key>[A-F\d]{8}\-(?:[A-F\d]{4}\-){3}[A-F\d]{12})/(?i)(?P<_id>[A-F\d]{24,25})$',
+    url(r'^metadata/delete/(?i)(?P<api_key>[A-F\d]{8}\-(?:[A-F\d]{4}\-){3}[A-F\d]{12})/(?i)(?P<_id>[A-F\d]{26})$',
         views.metadata_delete, name='metadata_delete'),
     url(r'^metadata/created/(?i)(?P<api_key>[A-F\d]{8}\-(?:[A-F\d]{4}\-){3}[A-F\d]{12})$',
         views.metadata_created, name='metadata_created'),

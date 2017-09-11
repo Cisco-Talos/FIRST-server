@@ -15,12 +15,12 @@ import re
 import sys
 
 #   First Modules
-from first.error import FIRSTError
-from first.dbs import FIRSTDBManager
-from first.engines.results import Result
+from first_core.error import FIRSTError
+from first_core.dbs import FIRSTDBManager
+from first_core.engines.results import Result
+from first_core.disassembly import Disassembly
 
 #   Third Party Modules
-from bson.objectid import ObjectId
 
 
 #   Class for FirstEngine related exceptions
@@ -96,9 +96,9 @@ class AbstractEngine(object):
 
         self._add(function)
 
-    def scan(self, opcodes, architecture, apis):
+    def scan(self, opcodes, architecture, apis, **kwargs):
         '''Returns a list of Result objects'''
-        results = self._scan(opcodes, architecture, apis)
+        results = self._scan(opcodes, architecture, apis, **kwargs)
 
         if isinstance(results, Result):
             return [results]
@@ -131,7 +131,7 @@ class AbstractEngine(object):
         '''Returns nothing'''
         raise FIRSTEngineError('Not Implemented')
 
-    def _scan(self, opcodes, architecture, apis):
+    def _scan(self, opcodes, architecture, apis, **kwargs):
         '''Returns List of function IDs'''
         raise FIRSTEngineError('Not Implemented')
 
@@ -170,9 +170,7 @@ class FIRSTEngineManager(object):
         #   Dynamically (re)load engines
         engines = []
         for e in active_engines:
-            if e.path in sys.modules:
-                reload(sys.modules[e.path])
-            else:
+            if e.path not in sys.modules:
                 __import__(e.path)
 
             module = sys.modules[e.path]
@@ -220,8 +218,12 @@ class FIRSTEngineManager(object):
         '''
         required_keys = {'id', 'apis', 'opcodes', 'architecture', 'sha256'}
         if (dict != type(function)) or not required_keys.issubset(function.keys()):
-            print 'Data provided is not the correct type or required keys not provided'
+            print '[1stEM] Data provided is not the correct type or required keys not provided'
             return None
+
+        dis = Disassembly(function['architecture'], function['opcodes'])
+        if dis:
+            function['disassembly'] = dis
 
         #   Send function details to each registered engine
         errors = {}
@@ -267,10 +269,12 @@ class FIRSTEngineManager(object):
         engine_results = {}
         engines = self._engines
 
+        dis = Disassembly(architecture, opcodes)
         for i in xrange(len(engines)):
             engine = engines[i]
             try:
-                results = engine.scan(opcodes, architecture, apis)
+                results = engine.scan(opcodes, architecture, apis,
+                                        disassembly=dis)
                 if results:
                     engine_results[i] = results
 
