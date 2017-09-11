@@ -1,7 +1,7 @@
 #! /usr/bin/python
 #-------------------------------------------------------------------------------
 #
-#   Utility Shell to manage Engine related operations
+#   Utility Shell to manage User related operations
 #   Copyright (C) 2016  Angel M. Villegas
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -34,15 +34,13 @@ sys.path.append(os.path.abspath('..'))
 #   FIRST Modules
 import first.wsgi
 import first.settings
-from first_core.engines import AbstractEngine
 from first_core.disassembly import Disassembly
-from first_core import DBManager, EngineManager
-from first_core.models import Engine, User, Function
+from first_core.models import User
 
 #   Third Party Modules
 from django.core.paginator import Paginator
 
-class EngineCmd(Cmd):
+class UserCmd(Cmd):
 
     def __init__(self):
         Cmd.__init__(self)
@@ -60,10 +58,10 @@ class EngineCmd(Cmd):
                 '+========================================================+\n'
                 '|                  FIRST User Shell Menu                 |\n'
                 '+========================================================+\n'
-                '| list     | List all engines currently installed        |\n'
-                '| info     | Get info on an engine                       |\n'
+                '| list     | List all users currently installed          |\n'
+                '| info     | Get info on an user                         |\n'
                 '| adduser  | Registers a user manually                   |\n'
-                '| enable   | Enable engine (Engine will be enabled)      |\n'
+                '| enable   | Enable user                                 |\n'
                 '| disable  | Disable user account                        |\n'
                 '+--------------------------------------------------------+\n')
 
@@ -88,7 +86,7 @@ class EngineCmd(Cmd):
         '''Run line in python'''
         exec line
 
-class RootCmd(EngineCmd):
+class RootCmd(UserCmd):
     def do_list(self, line):
         print 'list - List all registered users'
         if line in ['help', '?']:
@@ -166,7 +164,7 @@ class RootCmd(EngineCmd):
                '| Created | {1:53} |\n'
                '+' + '-'*9 + '+' + '-'*55 + '\n'
                '| Active  | {0.active:53} |\n'
-               '+' + '-'*69 + '+\n').format(user, str(user.created))
+               '+' + '-'*65 + '+\n').format(user, str(user.created))
 
     def do_enable(self, line):
         print 'enable - Enable user \n'

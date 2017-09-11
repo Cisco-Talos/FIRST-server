@@ -146,17 +146,11 @@ class BasicMaskingEngine(AbstractEngine):
                 normalized.append(instr + ', '.join(operand_instrs))
             '''
 
-            print 'Original'
-            print original
-            print 'Normalized'
-            print [x.encode('hex') for x in normalized]
-
             if MIN_REQUIRED_INSTRUCTIONS > len(normalized):
                 print 145
                 return (0, None)
 
             h_sha256 = sha256(''.join(normalized)).hexdigest()
-            print (changed_bytes, h_sha256)
             return (changed_bytes, h_sha256)
 
         except Exception as e:
@@ -175,7 +169,6 @@ class BasicMaskingEngine(AbstractEngine):
 
         if not h_sha256:
             return
-
 
         try:
             db_obj = BasicMasking.objects.get(sha256=h_sha256,
