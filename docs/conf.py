@@ -42,8 +42,7 @@ extensions = [
 # Autodoc settings
 autoclass_content = 'class'
 autodoc_mock_imports = ['httplib2', 'oauth2client', 'apiclient', 'mongoengine',
-                        'django', 'bson', 'distorm3', 'mongoengine.queryset',
-                        'bson.objectid']
+                        'django', 'capstone', 'mongoengine.queryset']
 
 class _MyMockModule(sphinx.ext.autodoc._MockModule):
     '''Class created to get around autodoc issues with server's dependencies.'''
