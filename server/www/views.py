@@ -38,7 +38,7 @@ def profile(request):
     if not user:
         return redirect(reverse('www:index'))
 
-    count = Function.objects(metadata__user=user).count()
+    count = Function.objects.filter(metadata__user=user).count()
     data = {'title' : 'Profile',
             'user' : user.dump(True),
             'metadata_count' : count}

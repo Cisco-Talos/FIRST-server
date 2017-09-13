@@ -32,8 +32,6 @@ import ConfigParser
 from hashlib import md5
 
 #   Third Party Modules
-import bson
-
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -161,14 +159,14 @@ class FIRSTDB(AbstractDB):
 
         try:
             function = Function.objects.get(sha256=sha256_hash,
-                                            opcodes=bson.Binary(opcodes),
+                                            opcodes=opcodes,
                                             architecture=architecture) #,
                                             #apis__api=apis)
         except ObjectDoesNotExist:
             if create:
                 #   Create function and add it to sample
                 function = Function.objects.create( sha256=sha256_hash,
-                                                    opcodes=bson.Binary(opcodes),
+                                                    opcodes=opcodes,
                                                     architecture=architecture)
 
                 apis_ = [FunctionApis.objects.get_or_create(x)[0] for x in apis]

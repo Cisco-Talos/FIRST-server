@@ -32,12 +32,14 @@ import datetime
 from functools import wraps
 
 #   Django Modules
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 #   FIRST Modules
 #   TODO: Use DBManager to get user objects and do User operations
+from first.settings import CONFIG
 from first_core.models import User
 from first_core.error import FIRSTError
 
@@ -45,7 +47,6 @@ from first_core.error import FIRSTError
 import httplib2
 from oauth2client import client
 from apiclient import discovery
-from mongoengine.queryset import DoesNotExist
 
 
 
@@ -118,7 +119,7 @@ class Authentication():
     def __init__(self, request):
         self.request = request
         redirect_uri = request.build_absolute_uri(reverse('www:oauth', kwargs={'service' : 'google'}))
-        secret = os.environ.get('GOOGLE_SECRET', '/usr/local/etc/google_secret.json')
+        secret = CONFIG.get('oauth_path', '/usr/local/etc/google_secret.json')
         try:
             self.flow = {'google' : client.flow_from_clientsecrets(secret,
                                     scope=['https://www.googleapis.com/auth/userinfo.profile',
@@ -200,7 +201,7 @@ class Authentication():
 
                         return redirect(url)
 
-                    except DoesNotExist:
+                    except ObjectDoesNotExist:
                         self.request.session.flush()
                         raise FIRSTAuthError('User is not registered.')
 
@@ -236,7 +237,7 @@ class Authentication():
                 user = None
                 continue
 
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 pass
 
             #   Create random 4 digit value for the handle
@@ -248,7 +249,7 @@ class Authentication():
                     user = User.objects.get(handle=handle, number=num)
                     user = None
 
-                except DoesNotExist:
+                except ObjectDoesNotExist:
                     user = User(name=name,
                                 email=email,
                                 api_key=api_key,
@@ -269,5 +270,5 @@ class Authentication():
             user = User.objects.get(email=email)
             return user
 
-        except DoesNotExist:
+        except ObjectDoesNotExist:
             return None
