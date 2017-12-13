@@ -141,7 +141,7 @@ class MnemonicHashEngine(AbstractEngine):
             else:
                 similarity += 5
 
-            results.append(FunctionResult(function_id, similarity))
+            results.append(FunctionResult(str(function_id), similarity))
 
         return results
 

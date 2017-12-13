@@ -224,7 +224,7 @@ class BasicMaskingEngine(AbstractEngine):
                 overlap = float(len(func_apis.intersection(apis)))
                 similarity += (overlap / total_apis) * 10
 
-            results.append(FunctionResult(function_id, similarity))
+            results.append(FunctionResult(str(function_id), similarity))
 
         return results
 
