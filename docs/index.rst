@@ -17,9 +17,16 @@ Installing your own FIRST server can be quick and easy with an Ubuntu machine an
 
     **After cloning the Git repo**
 
-    Save your google auth json information to install/google_secret.json. To generate a google_secret.json file you will need to go to https://console.developers.google.com, create a project, select the project, select Credentials in the left set of links under APIs & services. Once selected, select the Create credentials drop down menu and click OAuth client ID. Select Web application, and fill out the details. Once created you will have the option to down the JSON file containing the generated secret.
+    Save your google auth json information to install/google_secret.json. To generate a google_secret.json file you will need to go to https://console.developers.google.com, create a project, select the project, select Credentials in the left set of links under APIs & services. Once selected, select the Create credentials drop down menu and click OAuth client ID. Select Web application, and fill out the details. Set the Authorized redirect URIs to your server name with `/oauth/google`
 
-    Optionally, you can add install/ssl/apache.crt and apache.key file if you have an SSL certificate you would prefer to use.
+    Examples
+
+    .. code::
+
+        http://localhost:8888/oauth/google
+        http://first.talosintelligence.com/oauth/google
+
+    Once created you will have the option to down the JSON file containing the generated secret. Optionally, you can add install/ssl/apache.crt and apache.key file if you have an SSL certificate you would prefer to use.
 
 .. code::
 
@@ -37,7 +44,7 @@ When the FIRST server is installed, no engines are installed. FIRST comes with t
     .. code::
 
         $ cd FIRST-server/server/utilities
-        $ python user_shell.py <user_handle: johndoe#0001> <user email: john@doe.com>
+        $ python user_shell.py adduser <user_handle: johndoe#0001> <user email: john@doe.com>
 
     Ensure the developer is registered before progressing.
 
