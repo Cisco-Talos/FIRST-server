@@ -30,7 +30,7 @@ services:
          - ./data/mongodb:/data/db
       restart: always
    mysql:
-      image: mysql
+      image: mysql:5.7
       expose:
          - 3306
       environment:
