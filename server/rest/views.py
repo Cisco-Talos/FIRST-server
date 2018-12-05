@@ -192,11 +192,11 @@ def metadata_add(request, md5_hash, crc32, user):
                                         'Report issue is this is a valid '
                                         'API').format(api)})
 
-            if not re.match('^[a-zA-Z\d_:@\?\$]+$', api):
+            if not re.match('^[a-zA-Z\d_:@\?\$i\.]+$', api):
                 return render(request, 'rest/error_json.html',
                                 {'msg' : ('Invalid characters in API, supported'
                                         'characters match the regex /^[a-zA-Z'
-                                        '\\d_:@\\?\\$]+$/. Report issue if'
+                                        '\\d_:@\\?\\$\\.]+$/. Report issue if'
                                         'the submitted API valid is valid.')})
 
     #   All input has been validated
@@ -499,11 +499,11 @@ def metadata_scan(request, user):
                                         'Report issue is this is a valid '
                                         'API').format(api)})
 
-            if not re.match('^[a-zA-Z\d_:@\?\$]+$', api):
+            if not re.match('^[a-zA-Z\d_:@\?\$\.]+$', api):
                 return render(request, 'rest/error_json.html',
                                 {'msg' : ('Invalid characters in API, supported'
                                         'characters match the regex /^[a-zA-Z'
-                                        '\\d_:@\\?\\$]+$/. Report issue if'
+                                        '\\d_:@\\?\\$\\.]+$/. Report issue if'
                                         'the submitted API valid is valid.')})
 
         try:
