@@ -41,7 +41,7 @@ class User(models.Model):
     active = models.BooleanField(default=True)
 
     service = models.CharField(max_length=16)
-    auth_data = models.CharField(max_length=4096)
+    auth_data = models.CharField(max_length=32768)
 
     @property
     def user_handle(self):

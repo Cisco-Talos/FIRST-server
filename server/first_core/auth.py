@@ -179,12 +179,10 @@ class Authentication():
 
             if not oauth.access_token_expired:
                 http_auth = oauth.authorize(httplib2.Http())
-                service = discovery.build('plus', 'v1', http_auth)
-                info = service.people().get(userId='me', fields='displayName,emails')
-                info = info.execute()
-                email = info['emails'][0]['value']
-                self.request.session['info'] = {'name' : info['displayName'],
-                                                'email' : email}
+                service = discovery.build('oauth2', 'v2', http_auth)
+                response = service.userinfo().v2().me().get().execute()
+                self.request.session['info'] = {'name' : response['name'],
+                                                'email' : response['email']}
 
                 expires = credentials['id_token']['exp']
                 #expires = datetime.datetime.fromtimestamp(expires)
