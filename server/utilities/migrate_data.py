@@ -36,7 +36,7 @@ def main(prefix):
         with open(os.path.join(prefix, "User"), "w") as f_out:
             for l in f:
                 d = json.loads(l.strip())
-                f_out.write("0|%s|%s|%s|%d|%s|%s|%d|%d|%s|%s\n" % (d['name'], 
+                f_out.write(("0|%s|%s|%s|%d|%s|%s|%d|%d|%s|%s\n" % (d['name'], 
                                                                    d['email'], 
                                                                    d['handle'], 
                                                                    d['number'], 
@@ -45,7 +45,7 @@ def main(prefix):
                                                                    int(d['rank']['$numberLong']), 
                                                                    1 if d['active'] else 0, 
                                                                    d['service'], 
-                                                                   d['auth_data']))
+                                                                   d['auth_data'])).encode('UTF-8'))
                 user_ids[d["_id"]["$oid"]] = user_id_counter
                 user_id_counter += 1
 
