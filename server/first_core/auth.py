@@ -32,20 +32,21 @@ import datetime
 from functools import wraps
 
 #   Django Modules
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 #   FIRST Modules
 #   TODO: Use DBManager to get user objects and do User operations
-from first.models import User
-from first.error import FIRSTError
+from first.settings import CONFIG
+from first_core.models import User
+from first_core.error import FIRSTError
 
 #   Thirdy Party
 import httplib2
 from oauth2client import client
 from apiclient import discovery
-from mongoengine.queryset import DoesNotExist
 
 
 
@@ -57,7 +58,7 @@ class FIRSTAuthError(FIRSTError):
 
 
 def verify_api_key(api_key):
-    users = User.objects(api_key=api_key)
+    users = User.objects.filter(api_key=api_key)
     if not users:
         return None
 
@@ -75,7 +76,7 @@ def require_apikey(view_function):
         if key:
             user = verify_api_key(key)
             del kwargs['api_key']
-            if user:
+            if user and user.active:
                 kwargs['user'] = user
                 return view_function(*args, **kwargs)
 
@@ -118,7 +119,7 @@ class Authentication():
     def __init__(self, request):
         self.request = request
         redirect_uri = request.build_absolute_uri(reverse('www:oauth', kwargs={'service' : 'google'}))
-        secret = os.environ.get('GOOGLE_SECRET', '/usr/local/etc/google_secret.json')
+        secret = CONFIG.get('oauth_path', '/usr/local/etc/google_secret.json')
         try:
             self.flow = {'google' : client.flow_from_clientsecrets(secret,
                                     scope=['https://www.googleapis.com/auth/userinfo.profile',
@@ -178,12 +179,10 @@ class Authentication():
 
             if not oauth.access_token_expired:
                 http_auth = oauth.authorize(httplib2.Http())
-                service = discovery.build('plus', 'v1', http_auth)
-                info = service.people().get(userId='me', fields='displayName,emails')
-                info = info.execute()
-                email = info['emails'][0]['value']
-                self.request.session['info'] = {'name' : info['displayName'],
-                                                'email' : email}
+                service = discovery.build('oauth2', 'v2', http_auth)
+                response = service.userinfo().v2().me().get().execute()
+                self.request.session['info'] = {'name' : response['name'],
+                                                'email' : response['email']}
 
                 expires = credentials['id_token']['exp']
                 #expires = datetime.datetime.fromtimestamp(expires)
@@ -200,7 +199,7 @@ class Authentication():
 
                         return redirect(url)
 
-                    except DoesNotExist:
+                    except ObjectDoesNotExist:
                         self.request.session.flush()
                         raise FIRSTAuthError('User is not registered.')
 
@@ -236,7 +235,7 @@ class Authentication():
                 user = None
                 continue
 
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 pass
 
             #   Create random 4 digit value for the handle
@@ -248,7 +247,7 @@ class Authentication():
                     user = User.objects.get(handle=handle, number=num)
                     user = None
 
-                except DoesNotExist:
+                except ObjectDoesNotExist:
                     user = User(name=name,
                                 email=email,
                                 api_key=api_key,
@@ -269,5 +268,5 @@ class Authentication():
             user = User.objects.get(email=email)
             return user
 
-        except DoesNotExist:
+        except ObjectDoesNotExist:
             return None

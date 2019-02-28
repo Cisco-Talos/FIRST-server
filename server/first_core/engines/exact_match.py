@@ -23,9 +23,9 @@
 from hashlib import sha256
 
 #   FIRST Modules
-from first.error import FIRSTError
-from first.engines import AbstractEngine
-from first.engines.results import FunctionResult
+from first_core.error import FIRSTError
+from first_core.engines import AbstractEngine
+from first_core.engines.results import FunctionResult
 
 class ExactMatchEngine(AbstractEngine):
     _name = 'ExactMatch'
@@ -39,7 +39,7 @@ class ExactMatchEngine(AbstractEngine):
         '''
         pass
 
-    def _scan(self, opcodes, architecture, apis):
+    def _scan(self, opcodes, architecture, apis, disassembly):
         '''Returns List of FunctionResults'''
 
         db = self._dbs['first_db']
@@ -50,7 +50,7 @@ class ExactMatchEngine(AbstractEngine):
             return None
 
         similarity = 90.0
-        if set(function.apis) == set(apis):
+        if set(function.apis.values()) == set(apis):
             similarity += 10.0
 
         return [FunctionResult(str(function.id), similarity)]

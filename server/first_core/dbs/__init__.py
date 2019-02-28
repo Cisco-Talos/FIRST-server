@@ -24,7 +24,7 @@ import ConfigParser
 from hashlib import md5
 
 #   FIRST Modules
-from first.error import FIRSTError
+from first_core.error import FIRSTError
 
 #   Class for FirstDB related exceptions
 class FIRSTDBError(FIRSTError):
@@ -110,6 +110,6 @@ class FIRSTDBManager(object):
 
 
 #   FIRST DB Classes
-from first.dbs.builtin_db import FIRSTDB
+from first_core.dbs.builtin_db import FIRSTDB
 
 possible_dbs = [FIRSTDB]

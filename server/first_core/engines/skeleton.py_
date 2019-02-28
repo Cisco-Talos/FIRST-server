@@ -20,8 +20,8 @@
 
 
 #   FIRST Modules
-from first.error import FIRSTError
-from first.engines import AbstractEngine
+from first_core.error import FIRSTError
+from first_core.engines import AbstractEngine
 
 #   Third Party Modules
 

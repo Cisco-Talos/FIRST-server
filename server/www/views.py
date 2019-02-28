@@ -9,8 +9,8 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 
 
 #   FIRST Modules
-from www.models import Function, User
-from first.auth import Authentication, require_login, FIRSTAuthError
+from first_core.models import Function, User
+from first_core.auth import Authentication, require_login, FIRSTAuthError
 
 def handler404(request):
     return render(request, 'www/404.html', None)
@@ -38,7 +38,7 @@ def profile(request):
     if not user:
         return redirect(reverse('www:index'))
 
-    count = Function.objects(metadata__user=user).count()
+    count = Function.objects.filter(metadata__user=user).count()
     data = {'title' : 'Profile',
             'user' : user.dump(True),
             'metadata_count' : count}

@@ -12,14 +12,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
 #   FIRST Modules
-from first import DBManager, EngineManager
-from first.auth import  verify_api_key, Authentication, FIRSTAuthError, \
+from first_core import DBManager, EngineManager
+from first_core.util import make_id, is_engine_metadata
+from first_core.auth import  verify_api_key, Authentication, FIRSTAuthError, \
                         require_login, require_apikey
 
 
 MAX_FUNCTIONS = 20
 MAX_METADATA = 20
-VALIDATE_IDS = lambda x: re.match('^[a-f\d]{24,25}$', x)
+VALIDATE_IDS = lambda x: re.match('^[A-Fa-f\d]{26}$', x)
 
 #-----------------------------------------------------------------------------
 #
@@ -217,8 +218,7 @@ def metadata_add(request, md5_hash, crc32, user):
         f = functions[client_key]
 
         #   Check if the id sent back is from an engine, if so skip it
-        if (('id' in f) and (f['id']) and (len(f['id']) == 25)
-            and ((int(f['id'][0]) >> 3) & 1)):
+        if (('id' in f) and (f['id']) and is_engine_metadata(f['id'])):
             continue;
 
         function = db.get_function(create=True, **f)
@@ -238,13 +238,14 @@ def metadata_add(request, md5_hash, crc32, user):
                                     'function in FIRST')})
 
         #   The '0' indicated the metadata_id is from a user.
-        results[client_key] = '0{}'.format(metadata_id)
+        _id = make_id(0, metadata=metadata_id)
+        results[client_key] = _id
 
         #   Set the user as applying the metadata
-        db.applied(sample, user, metadata_id)
+        db.applied(sample, user, _id)
 
         #   Send opcode to EngineManager
-        EngineManager.add(function.dump())
+        EngineManager.add(function.dump(True))
 
     return HttpResponse(json.dumps({'failed' : False, 'results' : results}))
 
@@ -544,25 +545,14 @@ def metadata_status_change(_id, user, md5_hash, crc32, applied):
         return render(None, 'rest/error_json.html',
                         {'msg' : 'Invalid metadata information'})
 
-    #   Currently 24-25, early beta used a 24 byte string, moved to 25 byte one
-    #   TODO: Change to 25 only once it is closed beta time
     if not VALIDATE_IDS(_id):
         return render(None, 'rest/error_json.html',
                         {'msg' : 'Invalid id value'})
-
-    metadata_id = _id
-    if len(_id) == 25:
-        metadata_id = _id[1:]
 
     db = DBManager.first_db
     if not db:
         return render(None, 'rest/error_json.html',
                         {'msg' : 'Unable to connect to FIRST DB'})
-
-    is_engine = False
-    if ((len(_id) == 25) and (int(_id[0], 16) & 0x8)):
-        #   Metadata came from an engine
-        is_engine = True
 
     #   Get sample
     sample = db.get_sample(md5_hash, crc32)
@@ -571,8 +561,8 @@ def metadata_status_change(_id, user, md5_hash, crc32, applied):
                         {'msg' : 'Sample does not exist in FIRST'})
 
     if applied:
-        results = db.applied(sample, user, metadata_id, is_engine)
+        results = db.applied(sample, user, _id)
     else:
-        results = db.unapplied(sample, user, metadata_id, is_engine)
+        results = db.unapplied(sample, user, _id)
 
     return HttpResponse(json.dumps({'failed' : False, 'results' : results}))

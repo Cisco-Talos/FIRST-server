@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #
-#   FIRST MongoDB Models
-#   Copyright (C) 2016  Angel M. Villegas
+#   FIRST Django ORM Models
+#   Copyright (C) 2017  Angel M. Villegas
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,40 +17,31 @@
 #   with this program; if not, write to the Free Software Foundation, Inc.,
 #   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#   Requirements
-#   ------------
-#   mongoengine (https://pypi.python.org/pypi/mongoengine/)
-#
 #-------------------------------------------------------------------------------
 
 
 #   Python Modules
 from __future__ import unicode_literals
-import datetime
 
 #   Third Party Modules
-from bson.objectid import ObjectId
-from mongoengine import Document, StringField, UUIDField, \
-                        DateTimeField, LongField, ReferenceField, \
-                        BinaryField, ListField, BooleanField, ObjectIdField, \
-                        IntField, EmbeddedDocument, EmbeddedDocumentListField
+from django.db import models
+from django.utils import timezone
 
-class User(Document):
-    name = StringField(max_length=128, required=True)
-    email = StringField(max_length=254, unique=True)
-    handle = StringField(max_length=32, required=True)
-    number = IntField(required=True)
-    api_key = UUIDField(required=True, unique=True)
-    created = DateTimeField(default=datetime.datetime.utcnow, required=True)
-    rank = LongField(default=0)
-    active = BooleanField(default=True)
 
-    service = StringField(max_length=16, required=True)
-    auth_data = StringField(max_length=4096, required=True)
+class User(models.Model):
+    id = models.BigAutoField(primary_key=True)
 
-    meta = {
-        'indexes' : [('handle', 'number'), 'api_key', 'email']
-    }
+    name = models.CharField(max_length=128)
+    email = models.CharField(max_length=254)
+    handle = models.CharField(max_length=32)
+    number = models.IntegerField()
+    api_key = models.UUIDField(unique=True)
+    created = models.DateTimeField(default=timezone.now)
+    rank = models.BigIntegerField(default=0)
+    active = models.BooleanField(default=True)
+
+    service = models.CharField(max_length=16)
+    auth_data = models.CharField(max_length=32768)
 
     @property
     def user_handle(self):
@@ -67,22 +58,31 @@ class User(Document):
                             'rank' : self.rank,
                             'created' : self.created,
                             'active' : self.active})
-
         return data
 
+    class Meta:
+        db_table = 'User'
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['api_key']),
+        ]
+        index_together = ("handle", "number")
 
-class Engine(Document):
-    name = StringField(max_length=16, required=True, unique=True)
-    description = StringField(max_length=128, required=True)
-    path = StringField(max_length=256, required=True)
-    obj_name = StringField(max_length=32, required=True)
-    applied = ListField(default=list)
-    developer = ReferenceField(User)
-    active = BooleanField(default=False)
 
-    meta = {
-        'indexes' : ['name']
-    }
+class Engine(models.Model):
+    name = models.CharField(max_length=16, unique=True)
+    description = models.CharField(max_length=256)
+    path = models.CharField(max_length=256)
+    obj_name = models.CharField(max_length=32)
+
+    developer = models.ForeignKey('User')
+    active = models.BooleanField(default=False)
+
+    @property
+    def rank(self):
+        #   TODO: Complete
+        #return len(self.applied)
+        return 0
 
     def dump(self, full=False):
         data = {'name' : self.name,
@@ -91,107 +91,151 @@ class Engine(Document):
                 'developer' : self.developer.user_handle}
 
         if full:
-            data.update({'id' : str(self.id), 'path' : self.path})
+            data.update({'path' : self.path})
 
         return data
+
+    class Meta:
+        db_table = 'Engine'
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
+
+#   TODO: Create scheme for tracking applied metadata for engines
+#
+#class AppliedEngine(models.Model):
+#    engine_id = models.ForeignKey(Engine)
+#    sample_id = models.ForeignKey(Sample)
+#    user_id =   models.ForeignKey(User)
+#    engine_metadata_id  = models.BigIntegerField();
+#
+#    class Meta:
+#        db_table = 'AppliedEngine'
+#        unique_together = ("sample_id", "user_id", "engine_metadata_id")
+
+class AppliedMetadata(models.Model):
+    metadata = models.ForeignKey('Metadata')
+    sample = models.ForeignKey('Sample')
+    user =   models.ForeignKey('User')
+
+    class Meta:
+        db_table = 'AppliedMetadata'
+        unique_together = ("metadata", "sample", "user")
+
+
+class MetadataDetails(models.Model):
+    name = models.CharField(max_length=256)
+    prototype = models.CharField(max_length=256)
+    comment = models.CharField(max_length=512)
+    committed = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'MetadataDetails'
+
+
+class Metadata(models.Model):
+    id = models.BigAutoField(primary_key=True)
+
+    user = models.ForeignKey('User')
+    details = models.ManyToManyField('MetadataDetails')
 
     @property
     def rank(self):
-        return len(self.applied)
+        if hasattr(self, 'id'):
+            return AppliedMetadata.objects.filter(metadata=self.id).count()
 
-
-class Metadata(EmbeddedDocument):
-    id = ObjectIdField(required=True, default=lambda: ObjectId())
-    user = ReferenceField(User)
-    name = ListField(StringField(max_length=128), default=list)
-    prototype = ListField(StringField(max_length=256), default=list)
-    comment = ListField(StringField(max_length=512), default=list)
-    committed = ListField(DateTimeField(), default=list)
-    applied = ListField(default=list)
-
-    meta = {
-        'indexes' : ['user']
-    }
-
-    def dump(self, full=False):
-        data = {'creator' : self.user.user_handle,
-                'name' : self.name[0],
-                'prototype' : self.prototype[0],
-                'comment' : self.comment[0],
-                'rank' : len(self.applied)}
-
-        if full:
-            data['history'] = []
-            for i in xrange(len(self.name) - 1, -1, -1):
-                #   Convert back with:
-                #   datetime.datetime.strptime(<dt>, '%Y-%m-%dT%H:%M:%S.%f')
-                committed = self.committed[i].isoformat()
-                data['history'].append({'name' : self.name[i],
-                                        'prototype' : self.prototype[i],
-                                        'comment' : self.comment[i],
-                                        'committed' : committed})
-
-        return data
+        return 0
 
     def has_changed(self, name, prototype, comment):
-        if (not self.name) or (not self.prototype) or (not comment):
+        if not self.details.exists():
             return True
 
-        if ((self.name[0] != name)
-            or (self.prototype[0] != prototype)
-            or (self.comment[0] != comment)):
+        latest = self.details.latest('committed')
+        if ((latest.name != name)
+            or (latest.prototype != prototype)
+            or (latest.comment != comment)):
             return True
 
         return False
 
-    @property
-    def rank(self):
-        return len(self.applied)
+    def dump(self, full=False):
+        data = {'creator' : self.user.user_handle}
+        latest_details = self.details.latest('committed')
+        data.update({
+            'name' : latest_details.name,
+            'prototype' : latest_details.prototype,
+            'comment' : latest_details.comment,
+            'rank' : self.rank
+        })
 
-#   Use bson.Binary to insert binary data
-class Function(Document):
-    sha256 = StringField(max_length=64)
-    opcodes = BinaryField()
-    apis = ListField(StringField(max_length=64), default=list)
-    metadata = EmbeddedDocumentListField(Metadata, default=list)
-    #  Return value from idaapi.get_file_type_name()
-    architecture = StringField(max_length=64, required=True)
+        if full:
+            #   Convert committed time back with:
+            #   datetime.datetime.strptime(<dt>, '%Y-%m-%dT%H:%M:%S.%f')
+            data['history'] = [{'name' : d.name,
+                                'prototype' : d.prototype,
+                                'comment' : d.comment,
+                                'committed' : d.committed.isoformat()}
+                                for d in self.details.order_by('committed')]
 
-    meta = {
-        'indexes' : []
-    }
+        return data
 
-    def dump(self):
-        return {'id' : self.id,
-                'opcodes' : self.opcodes,
-                'apis'  : self.apis,
-                'metadata' : [str(x.id) for x in self.metadata],
+    class Meta:
+        db_table = 'Metadata'
+        indexes = [models.Index(fields=['user'])]
+
+
+class FunctionApis(models.Model):
+    api = models.CharField(max_length=128, unique=True)
+
+    class Meta:
+        db_table = 'FunctionApis'
+
+
+class Function(models.Model):
+    id = models.BigAutoField(primary_key=True)
+
+    sha256 = models.CharField(max_length=64)
+    opcodes = models.BinaryField()
+    apis = models.ManyToManyField('FunctionApis')
+    metadata = models.ManyToManyField('Metadata')
+    architecture = models.CharField(max_length=64)
+
+    def dump(self, full=False):
+        data = {'opcodes' : self.opcodes,
                 'architecture' : self.architecture,
                 'sha256' : self.sha256}
 
-
-class Sample(Document):
-    md5 = StringField(max_length=32, required=True)
-    crc32 = IntField(required=True)
-    sha1 = StringField(max_length=40)
-    sha256 = StringField(max_length=64)
-    seen_by = ListField(ReferenceField(User), default=list)
-    functions = ListField(ReferenceField(Function), default=list)
-    last_seen = DateTimeField(default=datetime.datetime.utcnow)
-
-    meta = {
-        'indexes' : [('md5', 'crc32')]
-    }
-
-    def dump(self):
-        data = {'md5' : self.md5, 'crc32' : self.crc32,
-                'seen_by' : [str(x.id) for x in self.seen_by],
-                'functions' : [str(x.id) for x in self.functions]}
-
-        if 'sha1' in self:
-            data['sha1'] = self.sha1
-
-        if 'sha256' in self:
-            data['sha256'] = self.sha256
+        if full:
+            data['apis'] = [x['api'] for x in self.apis.values('api')]
+            data['id'] = self.id
 
         return data
+
+    class Meta:
+        db_table = 'Function'
+        unique_together = ('sha256', 'architecture')
+
+
+class Sample(models.Model):
+    id = models.BigAutoField(primary_key=True)
+
+    md5 = models.CharField(max_length=32)
+    crc32 = models.BigIntegerField()
+    sha1 = models.CharField(max_length=40, null=True, blank=True)
+    sha256 = models.CharField(max_length=64, null=True, blank=True)
+    seen_by = models.ManyToManyField('User')
+    functions = models.ManyToManyField('Function')
+    last_seen = models.DateTimeField(default=timezone.now, blank=True)
+
+    class Meta:
+        db_table = 'Sample'
+        index_together = ['md5', 'crc32']
+        unique_together = ('md5', 'crc32')
+
+    def dump(self):
+        return {'md5' : self.md5, 'crc32' : self.crc32,
+                'seen_by' : [str(x.id) for x in self.seen_by.all()],
+                'functions' : [str(x.id) for x in self.functions.all()],
+                'sha1' : self.sha1,
+                'sha256' : self.sha256}

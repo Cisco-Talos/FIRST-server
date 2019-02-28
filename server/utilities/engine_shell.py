@@ -30,10 +30,15 @@ from argparse import ArgumentParser
 sys.path.append(os.path.abspath('..'))
 
 #   FIRST Modules
+import first.wsgi
 import first.settings
-from first.models import Engine, User
-from first.engines import AbstractEngine
-from first import DBManager, EngineManager
+from first_core.engines import AbstractEngine
+from first_core.disassembly import Disassembly
+from first_core import DBManager, EngineManager
+from first_core.models import Engine, User, Function
+
+#   Third Party Modules
+from django.core.paginator import Paginator
 
 class EngineCmd(Cmd):
 
@@ -95,7 +100,7 @@ class RootCmd(EngineCmd):
             print 'No engines are currently installed'
             return
 
-        for engine in Engine.objects:
+        for engine in Engine.objects.all():
             name = engine.name
             description = engine.description
             print '+{}+{}+'.format('-' * 18, '-' * 50)
@@ -139,7 +144,7 @@ class RootCmd(EngineCmd):
 
         try:
             path, obj_name, email = line.split(' ')
-            developer = User.objects(email=email).get()
+            developer = User.objects.get(email=email)
 
             __import__(path)
             module = sys.modules[path]
@@ -160,9 +165,11 @@ class RootCmd(EngineCmd):
                 return
 
             e.install()
-            engine = Engine(name=e.name, description=e.description, path=path,
-                            obj_name=obj_name, developer=developer, active=True)
-            engine.save()
+            engine = Engine.objects.create( name=e.name,
+                                            description=e.description,
+                                            path=path,
+                                            obj_name=obj_name,
+                                            developer=developer, active=True)
             print 'Engine added to FIRST'
             return
 
@@ -239,7 +246,7 @@ class RootCmd(EngineCmd):
         engines = []
         for engine_name in populate_engines:
             if engine_name not in all_engines:
-                print '[Error] Engine "{}" is not installed'
+                print '[Error] Engine "{}" is not installed'.format(engine_name)
                 continue
 
             engines.append(all_engines[engine_name])
@@ -249,7 +256,7 @@ class RootCmd(EngineCmd):
             return
 
         print 'Starting to populate engines:\n-\t{}'.format('\n-\t'.join([e.name for e in engines]))
-        functions = db.get_all_functions()
+        functions = db.get_all_functions().order_by('pk')
         total = functions.count()
 
         msg = ' [Status] {0:.2f}% Completed ({1} out of {2})\r'
@@ -258,12 +265,16 @@ class RootCmd(EngineCmd):
 
         offset = 0
         limit = 500
-        for j in xrange(0, total, limit):
-            functions = db.get_all_functions().skip(j).limit(limit)
+        paginator = Paginator(functions, 100)
+        for j in paginator.page_range:
+            functions = paginator.page(j)
 
             for function in functions:
-                details = function.dump()
-                del details['metadata']
+                details = function.dump(True)
+
+                dis = Disassembly(details['architecture'], details['opcodes'])
+                if dis:
+                    details['disassembly'] = dis
 
                 for engine in engines:
                     try:
@@ -286,7 +297,7 @@ class RootCmd(EngineCmd):
             print 'The below errors occured:\n{}'.format('\n  '.join(errors))
 
     def _get_db_engine_obj(self, name):
-        engine = Engine.objects(name=name)
+        engine = Engine.objects.filter(name=name)
         if not engine:
             print 'Unable to locate Engine "{}"'.format(name)
             return
@@ -294,7 +305,7 @@ class RootCmd(EngineCmd):
         if len(engine) > 1:
             print 'More than one engine "{}" exists'.format(name)
             for e in engine:
-                print ' - {}'.format(e.name)
+                print ' - {}: {}'.format(e.name, e.description)
 
             return
 

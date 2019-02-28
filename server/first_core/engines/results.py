@@ -5,6 +5,7 @@
 #   Last Modified: August 2016
 #
 #-------------------------------------------------------------------------------
+from first_core.util import make_id
 
 class Result(object):
     '''Abstract class to encapsulate results returned from Engines'''
@@ -87,23 +88,19 @@ class FunctionResult(Result):
     This Result class is crafted for general engines that want to return
     a list of functions to the EngineManager
 
-    ID values are 25 hex character string. For metadata created by users,
-    not engines, the most significant bit is not set.
+    ID values are 26 hex character string. For metadata created by users,
+    not engines, the flag byte not set.
     '''
     def _get_metadata(self, db):
         if not hasattr(self, '_metadata'):
-            func = db.find_function(_id=self.id)
-            if not func:
-                return None
-
-            self._metadata = func.metadata
+            self._metadata = list(db.get_function_metadata(self.id))
             self._metadata.sort(key=lambda x: x.rank)
 
         data = None
         if len(self._metadata) > 0:
             metadata = self._metadata.pop()
             data = metadata.dump()
-            data['id'] = '0{}'.format(metadata.id)
+            data['id'] = make_id(0, metadata=metadata.id)
 
         return data
 
@@ -119,9 +116,11 @@ class EngineResult(Result):
     '''
     def _init(self, **kwargs):
         self._data = None
+        self._metadata = 0
+
         if 'data' in kwargs:
             self._data = kwargs['data']
-            self._data['id'] = '8{}'.format(self.id)
+            self._data['id'] = make_id(1, self._metadata, self.id)
 
     def _get_metadata(self, db):
         data = self._data
