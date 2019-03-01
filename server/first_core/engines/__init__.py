@@ -282,7 +282,7 @@ class FIRSTEngineManager(object):
                 print(e)
 
         results = {}
-        for i, hits in engine_results.iteritems():
+        for i, hits in engine_results.items():
             engine = engines[i]
 
             for result in hits:
