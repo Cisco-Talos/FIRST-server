@@ -4,6 +4,7 @@ import re
 import json
 import binascii
 from functools import wraps
+import codecs
 
 #   Django Modules
 from django.shortcuts import render
