@@ -75,7 +75,7 @@ class Engine(models.Model):
     path = models.CharField(max_length=256)
     obj_name = models.CharField(max_length=32)
 
-    developer = models.ForeignKey('User')
+    developer = models.ForeignKey('User', on_delete=models.PROTECT)
     active = models.BooleanField(default=False)
 
     @property
@@ -115,9 +115,9 @@ class Engine(models.Model):
 #        unique_together = ("sample_id", "user_id", "engine_metadata_id")
 
 class AppliedMetadata(models.Model):
-    metadata = models.ForeignKey('Metadata')
-    sample = models.ForeignKey('Sample')
-    user =   models.ForeignKey('User')
+    metadata = models.ForeignKey('Metadata', on_delete = models.PROTECT)
+    sample = models.ForeignKey('Sample', on_delete = models.PROTECT)
+    user =   models.ForeignKey('User', on_delete = models.PROTECT)
 
     class Meta:
         db_table = 'AppliedMetadata'
@@ -137,7 +137,7 @@ class MetadataDetails(models.Model):
 class Metadata(models.Model):
     id = models.BigAutoField(primary_key=True)
 
-    user = models.ForeignKey('User')
+    user = models.ForeignKey('User', on_delete = models.PROTECT)
     details = models.ManyToManyField('MetadataDetails')
 
     @property

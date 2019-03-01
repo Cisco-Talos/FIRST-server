@@ -28,7 +28,7 @@ import re
 import math
 import json
 import hashlib
-import ConfigParser
+import configparser 
 from hashlib import md5
 
 #   Third Party Modules
@@ -58,7 +58,7 @@ class FIRSTDB(AbstractDB):
         '''
         Constructor.
 
-        @param conf: ConfigParser.RawConfigParser
+        @param conf: configparser.RawConfigParser
         '''
         self._is_installed = True
         '''

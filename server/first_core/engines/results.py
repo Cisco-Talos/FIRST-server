@@ -27,8 +27,8 @@ class Result(object):
         while True:
             data = self._get_metadata(db)
 
-            if ((type(data) != dict) or (None in data.values())
-                or (not Result.required.issubset(data.keys()))):
+            if ((type(data) != dict) or (None in list(data.values()))
+                or (not Result.required.issubset(list(data.keys())))):
                 return
 
             data['similarity'] = self.similarity

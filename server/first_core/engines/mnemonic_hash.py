@@ -165,4 +165,4 @@ class MnemonicHashEngine(AbstractEngine):
         execute_from_command_line(['manage.py', 'migrate', 'engines'])
 
     def _uninstall(self):
-        print 'Manually delete tables associated with {}'.format(self.engine_name)
+        print('Manually delete tables associated with {}'.format(self.engine_name))

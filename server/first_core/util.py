@@ -44,7 +44,7 @@ def make_id(flags, metadata=0, engine=0):
 
 
 def parse_id(_id):
-    if type(_id) in [str, unicode]:
+    if type(_id) in [str]:
         if len(_id) != 26:
             return (None, None, None)
 

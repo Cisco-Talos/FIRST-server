@@ -21,7 +21,7 @@ else
 fi
 
 # Always run migrations
-/usr/bin/python /home/first/manage.py migrate
+/usr/bin/python3 /home/first/manage.py migrate
 
 # Finally, start up the apache service
 /usr/sbin/apache2ctl -D FOREGROUND

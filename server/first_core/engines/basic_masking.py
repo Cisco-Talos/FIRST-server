@@ -79,7 +79,8 @@ class BasicMaskingEngine(AbstractEngine):
             normalized = []
             original = []
             for i in disassembly.instructions():
-                original.append(str(i.bytes).encode('hex'))
+                import codecs
+                original.append(codecs.encode(i.bytes, 'hex'))
                 instr = ''.join(chr(x) for x in i.opcode if x)
 
                 #   Special mnemonic masking (Call, Jmp, JCC)
@@ -147,14 +148,14 @@ class BasicMaskingEngine(AbstractEngine):
             '''
 
             if MIN_REQUIRED_INSTRUCTIONS > len(normalized):
-                print 145
+                print(145)
                 return (0, None)
 
             h_sha256 = sha256(''.join(normalized)).hexdigest()
             return (changed_bytes, h_sha256)
 
         except Exception as e:
-            print 160, e
+            print(160, e)
 
             return (0, None)
 
@@ -248,4 +249,4 @@ class BasicMaskingEngine(AbstractEngine):
         execute_from_command_line(['manage.py', 'migrate', 'engines'])
 
     def _uninstall(self):
-        print 'Manually delete tables associated with {}'.format(self.engine_name)
+        print('Manually delete tables associated with {}'.format(self.engine_name))

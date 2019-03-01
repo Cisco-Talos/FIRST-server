@@ -163,12 +163,12 @@ def metadata_add(request, md5_hash, crc32, user):
     for client_key in functions:
         f = functions[client_key]
 
-        if not required_keys.issubset(f.keys()):
+        if not required_keys.issubset(list(f.keys())):
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Invalid function list'})
 
         try:
-            f['opcodes'] = f['opcodes'].decode('base64')
+            f['opcodes'] = codecs.decode(f['opcodes'].encode(), 'base64')
         except binascii.Error as e:
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Unable to decode opcodes'})
@@ -235,7 +235,7 @@ def metadata_add(request, md5_hash, crc32, user):
         if not metadata_id:
             return render(request, 'rest/error_json.html',
                             {'msg' : ('Unable to associate metadata with '
-                                    'function in FIRST')})
+                                      'function in FIRST')})
 
         #   The '0' indicated the metadata_id is from a user.
         _id = make_id(0, metadata=metadata_id)
@@ -482,7 +482,7 @@ def metadata_scan(request, user):
     required_keys = {'opcodes', 'apis', 'architecture'}
     for client_id, details in functions.iteritems():
         if ((dict != type(details))
-            or (not required_keys.issubset(details.keys()))):
+            or (not required_keys.issubset(list(details.keys())))):
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Function details not provided'})
 
@@ -507,7 +507,7 @@ def metadata_scan(request, user):
                                         'the submitted API valid is valid.')})
 
         try:
-            opcodes = details['opcodes'].decode('base64')
+            opcodes = codecs.decode(details['opcodes'].encode(), 'base64')
         except binascii.Error as e:
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Unable to decode opcodes'})

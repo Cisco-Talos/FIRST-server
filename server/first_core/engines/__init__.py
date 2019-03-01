@@ -90,8 +90,8 @@ class AbstractEngine(object):
     def add(self, function):
         required_keys = {'id', 'apis', 'opcodes', 'architecture', 'sha256'}
         if ((dict != type(function))
-            or not required_keys.issubset(function.keys())):
-            print 'Data provided is not the correct type or required keys not provided'
+            or not required_keys.issubset(list(function.keys()))):
+            print('Data provided is not the correct type or required keys not provided')
             return
 
         self._add(function)
@@ -185,17 +185,17 @@ class FIRSTEngineManager(object):
             try:
                 e = obj(self.__db_manager, str(e.id), e.rank)
                 if not isinstance(e, AbstractEngine):
-                    print '[EM] {} is not an AbstractEngine'.format(e)
+                    print('[EM] {} is not an AbstractEngine'.format(e))
                     continue
 
                 if e.is_operational:
                     engines.append(e)
 
             except FIRSTEngineError as e:
-                print e
+                print(e)
 
         if not engines:
-            print '[EM] Error: No engines could be loaded'
+            print('[EM] Error: No engines could be loaded')
 
         return engines
 
@@ -217,8 +217,8 @@ class FIRSTEngineManager(object):
 
         '''
         required_keys = {'id', 'apis', 'opcodes', 'architecture', 'sha256'}
-        if (dict != type(function)) or not required_keys.issubset(function.keys()):
-            print '[1stEM] Data provided is not the correct type or required keys not provided'
+        if (dict != type(function)) or not required_keys.issubset(list(function.keys())):
+            print('[1stEM] Data provided is not the correct type or required keys not provided')
             return None
 
         dis = Disassembly(function['architecture'], function['opcodes'])
@@ -270,7 +270,7 @@ class FIRSTEngineManager(object):
         engines = self._engines
 
         dis = Disassembly(architecture, opcodes)
-        for i in xrange(len(engines)):
+        for i in range(len(engines)):
             engine = engines[i]
             try:
                 results = engine.scan(opcodes, architecture, apis,
@@ -279,7 +279,7 @@ class FIRSTEngineManager(object):
                     engine_results[i] = results
 
             except Exception as e:
-                print e
+                print(e)
 
         results = {}
         for i, hits in engine_results.iteritems():
