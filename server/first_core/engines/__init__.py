@@ -13,6 +13,7 @@
 #   Python Modules
 import re
 import sys
+import functools
 
 #   First Modules
 from first_core.error import FIRSTError
@@ -298,7 +299,7 @@ class FIRSTEngineManager(object):
 
         #   Order functions
         cmp_func = lambda x,y: cmp(y.similarity, x.similarity)
-        ordered_functions = sorted(results.values(), cmp_func)
+        ordered_functions = sorted(results.values(), key=functools.cmp_to_key(cmp_func))
 
         #   Create Metadata list
         #   TODO: Narrow results to top 20 hits, use similarity and metadata rank
