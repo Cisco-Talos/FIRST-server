@@ -80,7 +80,7 @@ class MnemonicHashEngine(AbstractEngine):
             if len(mnemonics) < MIN_REQUIRED_MNEMONICS:
                 return (None, None)
 
-            return (mnemonics, sha256(''.join(mnemonics)).hexdigest())
+            return (mnemonics, sha256(''.join(mnemonics).encode('utf-8')).hexdigest())
 
         except Exception as e:
             raise e

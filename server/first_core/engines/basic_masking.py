@@ -151,7 +151,7 @@ class BasicMaskingEngine(AbstractEngine):
                 print(145)
                 return (0, None)
 
-            h_sha256 = sha256(''.join(normalized)).hexdigest()
+            h_sha256 = sha256(''.join(normalized).encode('utf-8')).hexdigest()
             return (changed_bytes, h_sha256)
 
         except Exception as e:
