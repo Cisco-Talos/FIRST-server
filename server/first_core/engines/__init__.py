@@ -298,7 +298,7 @@ class FIRSTEngineManager(object):
                     results[result.id].similarity = result.similarity
 
         #   Order functions
-        cmp_func = lambda x,y: cmp(y.similarity, x.similarity)
+        cmp_func = lambda x,y: (y.similarity > x.similarity) - (y.similarity < x.similarity)
         ordered_functions = sorted(results.values(), key=functools.cmp_to_key(cmp_func))
 
         #   Create Metadata list
