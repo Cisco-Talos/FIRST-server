@@ -169,7 +169,7 @@ class FIRSTDB(AbstractDB):
                                                     opcodes=opcodes,
                                                     architecture=architecture)
 
-                apis_ = [FunctionApis.objects.get_or_create(x)[0] for x in apis]
+                apis_ = [FunctionApis.objects.get_or_create(api=x)[0] for x in apis]
                 for api in apis_:
                     function.apis.add(api)
 
