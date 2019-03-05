@@ -114,7 +114,7 @@ class AbstractEngine(object):
         try:
             self._install()
         except FIRSTEngineError as e:
-            if e.message == 'Not Implemented':
+            if str(e) == 'Not Implemented':
                 return
 
             raise e
@@ -123,7 +123,7 @@ class AbstractEngine(object):
         try:
             self._uninstall()
         except FIRSTEngineError as e:
-            if e.message == 'Not Implemented':
+            if str(e) == 'Not Implemented':
                 return
 
             raise e

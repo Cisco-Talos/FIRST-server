@@ -84,7 +84,7 @@ class UserCmd(Cmd):
 
     def do_shell(self, line):
         '''Run line in python'''
-        exec line
+        exec(line)
 
 class RootCmd(UserCmd):
     def do_list(self, line):
@@ -138,7 +138,7 @@ class RootCmd(UserCmd):
             return
 
         user = User(email=email, handle=handle, number=num, api_key=uuid4())
-        user.name = raw_input('Enter user name: ')
+        user.name = input('Enter user name: ')
         user.save()
 
         print('User {0.user_handle} created (api key: {0.api_key})'.format(user))

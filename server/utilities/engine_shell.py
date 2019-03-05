@@ -86,7 +86,7 @@ class EngineCmd(Cmd):
 
     def do_shell(self, line):
         '''Run line in python'''
-        exec line
+        exec(line)
 
 class RootCmd(EngineCmd):
     def do_list(self, line):
