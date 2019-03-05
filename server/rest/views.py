@@ -4,6 +4,7 @@ import re
 import json
 import binascii
 from functools import wraps
+import codecs
 
 #   Django Modules
 from django.shortcuts import render
@@ -163,12 +164,12 @@ def metadata_add(request, md5_hash, crc32, user):
     for client_key in functions:
         f = functions[client_key]
 
-        if not required_keys.issubset(f.keys()):
+        if not required_keys.issubset(list(f.keys())):
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Invalid function list'})
 
         try:
-            f['opcodes'] = f['opcodes'].decode('base64')
+            f['opcodes'] = codecs.decode(f['opcodes'].encode(), 'base64')
         except binascii.Error as e:
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Unable to decode opcodes'})
@@ -178,7 +179,7 @@ def metadata_add(request, md5_hash, crc32, user):
         #   Ensure string lengths are enforced
         string_restrictions = { 'architecture' : 64, 'name' : 128,
                                 'prototype' : 256, 'comment' : 512}
-        for key, max_length in string_restrictions.iteritems():
+        for key, max_length in string_restrictions.items():
             if max_length < len(f[key]):
                 return render(request, 'rest/error_json.html',
                                 {'msg' : ('Data for "{}" exceeds the maximum '
@@ -235,7 +236,7 @@ def metadata_add(request, md5_hash, crc32, user):
         if not metadata_id:
             return render(request, 'rest/error_json.html',
                             {'msg' : ('Unable to associate metadata with '
-                                    'function in FIRST')})
+                                      'function in FIRST')})
 
         #   The '0' indicated the metadata_id is from a user.
         _id = make_id(0, metadata=metadata_id)
@@ -480,9 +481,9 @@ def metadata_scan(request, user):
     #   Validate input
     validated_input = {}
     required_keys = {'opcodes', 'apis', 'architecture'}
-    for client_id, details in functions.iteritems():
+    for client_id, details in functions.items():
         if ((dict != type(details))
-            or (not required_keys.issubset(details.keys()))):
+            or (not required_keys.issubset(list(details.keys())))):
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Function details not provided'})
 
@@ -507,7 +508,7 @@ def metadata_scan(request, user):
                                         'the submitted API valid is valid.')})
 
         try:
-            opcodes = details['opcodes'].decode('base64')
+            opcodes = codecs.decode(details['opcodes'].encode(), 'base64')
         except binascii.Error as e:
             return render(request, 'rest/error_json.html',
                             {'msg' : 'Unable to decode opcodes'})
@@ -517,7 +518,7 @@ def metadata_scan(request, user):
                                         'architecture' : architecture}
 
     data = {'engines' : {}, 'matches' : {}}
-    for client_id, details in validated_input.iteritems():
+    for client_id, details in validated_input.items():
         results = EngineManager.scan(user, **details)
         if (not results) or (results == ({}, [])):
             continue

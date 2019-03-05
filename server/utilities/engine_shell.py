@@ -51,7 +51,7 @@ class EngineCmd(Cmd):
         return
 
     def default(self, line):
-        print '"{}" is unknown command'.format(line)
+        print('"{}" is unknown command'.format(line))
 
     def preloop(self):
         print ( '\n\n'
@@ -86,34 +86,34 @@ class EngineCmd(Cmd):
 
     def do_shell(self, line):
         '''Run line in python'''
-        exec line
+        exec(line)
 
 class RootCmd(EngineCmd):
     def do_list(self, line):
-        print 'list - List all engines installed'
+        print('list - List all engines installed')
         if line in ['help', '?']:
-            print 'Usage: list \n'
+            print('Usage: list \n')
             return
 
-        print 'Engines currently installed\n'
+        print('Engines currently installed\n')
         if Engine.objects.count() == 0:
-            print 'No engines are currently installed'
+            print('No engines are currently installed')
             return
 
         for engine in Engine.objects.all():
             name = engine.name
             description = engine.description
-            print '+{}+{}+'.format('-' * 18, '-' * 50)
-            for i in xrange(0, len(description), 48):
-                print '| {0:16} | {1:48} |'.format(name, description[i:i+48])
+            print('+{}+{}+'.format('-' * 18, '-' * 50))
+            for i in range(0, len(description), 48):
+                print('| {0:16} | {1:48} |'.format(name, description[i:i+48]))
                 name = ''
 
-        print '+{}+{}+'.format('-' * 18, '-' * 50)
+        print('+{}+{}+'.format('-' * 18, '-' * 50))
 
     def do_info(self, line):
-        print 'info - Displays details about an installed Engine'
+        print('info - Displays details about an installed Engine')
         if line in ['', 'help', '?']:
-            print 'Usage: info <engine name>'
+            print('Usage: info <engine name>')
             return
 
         engine = self._get_db_engine_obj(line)
@@ -121,9 +121,9 @@ class RootCmd(EngineCmd):
             return
 
         d = engine.description
-        d = [d[i:i+53] for i in xrange(0, len(d), 53)]
+        d = [d[i:i+53] for i in range(0, len(d), 53)]
         d = ' |\n|             | '.join(['{:53}'.format(x) for x in d])
-        print ('+' + '-'*69 + '+\n'
+        print(('+' + '-'*69 + '+\n'
                '| Name        | {0.name:53} |\n'
                '+' + '-'*13 + '+' + '-'*55 + '\n'
                '| Description | {1:53} |\n'
@@ -137,10 +137,10 @@ class RootCmd(EngineCmd):
                '| Rank        | {0.rank:<53} |\n'
                '+' + '-'*13 + '+' + '-'*55 + '\n'
                '| Active      | {0.active:<53} |\n'
-               '+' + '-'*69 + '+\n').format(engine, d)
+               '+' + '-'*69 + '+\n').format(engine, d))
 
     def do_install(self, line):
-        print 'install  - Installs engine\n'
+        print('install  - Installs engine\n')
 
         try:
             path, obj_name, email = line.split(' ')
@@ -151,17 +151,17 @@ class RootCmd(EngineCmd):
 
             #   Skip module if the class name not located or is not a class
             if not hasattr(module, obj_name):
-                print '[Error] Unable to get {} from {}, exiting...'.format(obj_name, path)
+                print('[Error] Unable to get {} from {}, exiting...'.format(obj_name, path))
                 return
 
             obj = getattr(module, obj_name)
             if type(obj) != type:
-                print '[Error] {} is not the right type, exiting...'.format(obj_name)
+                print('[Error] {} is not the right type, exiting...'.format(obj_name))
                 return
 
             e = obj(DBManager, -1, -1)
             if not isinstance(e, AbstractEngine):
-                print '[Error] {} is not an AbstractEngine, exiting...'.format(obj_name)
+                print('[Error] {} is not an AbstractEngine, exiting...'.format(obj_name))
                 return
 
             e.install()
@@ -170,14 +170,14 @@ class RootCmd(EngineCmd):
                                             path=path,
                                             obj_name=obj_name,
                                             developer=developer, active=True)
-            print 'Engine added to FIRST'
+            print('Engine added to FIRST')
             return
 
         except ValueError as e:
-            print e
+            print(e)
 
         except ImportError as e:
-            print e
+            print(e)
 
         print ( 'Usage: \n'
                 'install <pythonic path> <class name> <developer email>\n'
@@ -185,9 +185,9 @@ class RootCmd(EngineCmd):
                 'Example of pythonic path: app.first.engines.exact_match\n')
 
     def do_delete(self, line):
-        print 'delete - Delete engine\n'
+        print('delete - Delete engine\n')
         if line in ['', 'help', '?']:
-            print 'Usage: delete <engine name>'
+            print('Usage: delete <engine name>')
             return
 
         engine, e = self._get_engine_by_name(line)
@@ -198,9 +198,9 @@ class RootCmd(EngineCmd):
         engine.delete()
 
     def do_enable(self, line):
-        print 'enable - Enable engine \n'
+        print('enable - Enable engine \n')
         if line in ['', 'help', '?']:
-            print 'Usage: enable <engine name>'
+            print('Usage: enable <engine name>')
             return
 
         engine = self._get_db_engine_obj(line)
@@ -209,12 +209,12 @@ class RootCmd(EngineCmd):
 
         engine.active = True
         engine.save()
-        print 'Engine "{}" enabled'.format(line)
+        print('Engine "{}" enabled'.format(line))
 
     def do_disable(self, line):
-        print 'disable - Disable engine \n'
+        print('disable - Disable engine \n')
         if line in ['', 'help', '?']:
-            print 'Usage: disable <engine name>'
+            print('Usage: disable <engine name>')
             return
 
         engine = self._get_db_engine_obj(line)
@@ -223,10 +223,10 @@ class RootCmd(EngineCmd):
 
         engine.active = False
         engine.save()
-        print 'Engine "{}" disabled'.format(line)
+        print('Engine "{}" disabled'.format(line))
 
     def do_populate(self, line):
-        print 'populate - Populate engine by sending all functions to engine\n'
+        print('populate - Populate engine by sending all functions to engine\n')
         if line in ['', 'help', '?']:
             print ( 'Usage: populate <engine name> ...\n\n'
                     'More than one engine name can be provided, separate with '
@@ -238,7 +238,7 @@ class RootCmd(EngineCmd):
 
         db = DBManager.first_db
         if not db:
-            print '[Error] Unable to connect to FIRST DB, exiting...'
+            print('[Error] Unable to connect to FIRST DB, exiting...')
             return
 
         #   Get all engines the user entered
@@ -246,16 +246,16 @@ class RootCmd(EngineCmd):
         engines = []
         for engine_name in populate_engines:
             if engine_name not in all_engines:
-                print '[Error] Engine "{}" is not installed'.format(engine_name)
+                print('[Error] Engine "{}" is not installed'.format(engine_name))
                 continue
 
             engines.append(all_engines[engine_name])
 
         if not engines:
-            print 'No engines to populate, exiting...'
+            print('No engines to populate, exiting...')
             return
 
-        print 'Starting to populate engines:\n-\t{}'.format('\n-\t'.join([e.name for e in engines]))
+        print('Starting to populate engines:\n-\t{}'.format('\n-\t'.join([e.name for e in engines])))
         functions = db.get_all_functions().order_by('pk')
         total = functions.count()
 
@@ -283,7 +283,7 @@ class RootCmd(EngineCmd):
                     except Exception as e:
                         msg = '[Error] Engine "{}": {}'.format(engine.name, e)
                         errors.append(msg)
-                        print msg
+                        print(msg)
 
                 i += 1
                 if 0 == (i % 50):
@@ -292,20 +292,20 @@ class RootCmd(EngineCmd):
 
         sys.stdout.write('\n')
         sys.stdout.flush()
-        print 'Populating engines complete, exiting...'
+        print('Populating engines complete, exiting...')
         if errors:
-            print 'The below errors occured:\n{}'.format('\n  '.join(errors))
+            print('The below errors occured:\n{}'.format('\n  '.join(errors)))
 
     def _get_db_engine_obj(self, name):
         engine = Engine.objects.filter(name=name)
         if not engine:
-            print 'Unable to locate Engine "{}"'.format(name)
+            print('Unable to locate Engine "{}"'.format(name))
             return
 
         if len(engine) > 1:
-            print 'More than one engine "{}" exists'.format(name)
+            print('More than one engine "{}" exists'.format(name))
             for e in engine:
-                print ' - {}: {}'.format(e.name, e.description)
+                print(' - {}: {}'.format(e.name, e.description))
 
             return
 
@@ -324,24 +324,24 @@ class RootCmd(EngineCmd):
 
             #   Skip module if the class name not located or is not a class
             if not hasattr(module, engine.obj_name):
-                print '[Error] Unable to get {0.obj_name} from {0.path}, exiting...'.format(engine)
+                print('[Error] Unable to get {0.obj_name} from {0.path}, exiting...'.format(engine))
                 return empty_result
 
             obj = getattr(module, engine.obj_name)
             if type(obj) != type:
-                print '[Error] {} is not the right type, exiting...'.format(engine.obj_name)
+                print('[Error] {} is not the right type, exiting...'.format(engine.obj_name))
                 return empty_result
 
             e = obj(DBManager, -1, -1)
             if not isinstance(e, AbstractEngine):
-                print '[Error] {} is not an AbstractEngine, exiting...'.format(engine.obj_name)
+                print('[Error] {} is not an AbstractEngine, exiting...'.format(engine.obj_name))
                 return empty_result
 
         except ValueError as e:
-            print e
+            print(e)
 
         except ImportError as e:
-            print e
+            print(e)
 
         return (engine, e)
 

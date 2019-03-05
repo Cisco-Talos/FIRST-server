@@ -51,7 +51,7 @@ from mongoengine import Document, StringField, UUIDField, \
 from django.core.paginator import Paginator, EmptyPage
 
 def info():
-    print 'INFO: {} {}'.format(len(gc.get_objects()), sum([sys.getsizeof(o) for o in gc.get_objects()]))
+    print('INFO: {} {}'.format(len(gc.get_objects()), sum([sys.getsizeof(o) for o in gc.get_objects()])))
 
 def migrate_users():
     for u in User.objects.all():
@@ -90,14 +90,14 @@ def migrate_functions(skip, limit):
 
         i += 1
         if 0 == (i % 1000):
-            print '---{}---'.format(i)
+            print('---{}---'.format(i))
             info()
             gc.collect()
             info()
 
 def _mf():
-    for i in xrange(0, Function.objects.count(), 1000):
-        print '--{}'.format(i)
+    for i in range(0, Function.objects.count(), 1000):
+        print('--{}'.format(i))
         migrate_functions(i, 1000)
 
         if i % 20000 == 0:
@@ -113,7 +113,7 @@ def migrate_apis(function, f):
     gc.collect()
 
 def migrate_metadata(function, f):
-    print 'Metadata: {} - {}'.format(f.sha256, len(f.metadata))
+    print('Metadata: {} - {}'.format(f.sha256, len(f.metadata)))
     for m in f.metadata:
         creator = ORM.User.objects.get(email=m.user.email)
         metadata = ORM.Metadata.objects.create(user=creator)
@@ -142,28 +142,28 @@ def main(args):
                         user=args.mongo_user,
                         password=getpass(pass_prompt))
     #   Convert User
-    print ' +  Adding Users'
+    print(' +  Adding Users')
     start = time.time()
     migrate_users()
-    print '[+] Users Added ({} s)'.format(time.time() - start)
+    print('[+] Users Added ({} s)'.format(time.time() - start))
 
     #   Convert Engine
-    print ' +  Adding Engines'
+    print(' +  Adding Engines')
     start = time.time()
     migrate_engines()
-    print '[+] Adding Engines ({} s)'.format(time.time() - start)
+    print('[+] Adding Engines ({} s)'.format(time.time() - start))
 
     #   Convert Samples
-    print ' +  Adding Samples'
+    print(' +  Adding Samples')
     start = time.time()
     migrate_samples()
-    print '[+] Adding Samples ({} s)'.format(time.time() - start)
+    print('[+] Adding Samples ({} s)'.format(time.time() - start))
 
     #   Convert Functions and their Metadata
-    print ' +  Adding Functions & Metadata'
+    print(' +  Adding Functions & Metadata')
     start = time.time()
     _mf()
-    print '[+] Adding Functions & Metadata ({} s)'.format(time.time() - start)
+    print('[+] Adding Functions & Metadata ({} s)'.format(time.time() - start))
 
 
 
@@ -239,7 +239,7 @@ class Metadata(EmbeddedDocument):
         return [{'committed' : self.committed[i],
                 'name' : self.name[i],
                 'prototype' : self.prototype[i],
-                'comment' : self.comment[i]} for i in xrange(len(self.name))]
+                'comment' : self.comment[i]} for i in range(len(self.name))]
 
 #   Use bson.Binary to insert binary data
 class Function(Document):

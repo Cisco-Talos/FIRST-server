@@ -33,7 +33,7 @@ def make_id(flags, metadata=0, engine=0):
         string: A 26 byte hex string
     '''
     data = [flags, metadata, engine]
-    if (None in data) or (not all([type(x) in [int, long] for x in data])):
+    if (None in data) or (not all([type(x) in [int] for x in data])):
         return None
 
     if ((engine > (2**32 - 1)) or (metadata > (2**64 - 1))
@@ -44,13 +44,13 @@ def make_id(flags, metadata=0, engine=0):
 
 
 def parse_id(_id):
-    if type(_id) in [str, unicode]:
+    if type(_id) in [str]:
         if len(_id) != 26:
             return (None, None, None)
 
         _id = int(_id, 16)
 
-    elif type(id) not in [int, long]:
+    elif type(id) not in [int]:
         return (None, None, None)
 
     flag = _id >> (8 * 12)

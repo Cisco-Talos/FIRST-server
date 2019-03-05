@@ -127,7 +127,7 @@ class Authentication():
                                     redirect_uri=redirect_uri),
                 }
         except TypeError as e:
-            print e
+            print(e)
 
         if 'auth' not in request.session:
             request.session['auth'] = {}
@@ -190,9 +190,9 @@ class Authentication():
 
                 if login:
                     try:
-                        user = User.objects.get(email=email)
+                        user = User.objects.get(email=self.request.session['info']['email'])
                         user.auth_data = json.dumps(credentials)
-                        user.name = info['displayName']
+                        user.name = self.request.session['info']['name']
                         user.save()
 
                         self.request.session['auth']['api_key'] = str(user.api_key)
@@ -241,7 +241,7 @@ class Authentication():
             #   Create random 4 digit value for the handle
             #   This prevents handle collisions
             number = random.randint(0, 9999)
-            for i in xrange(10000):
+            for i in range(10000):
                 try:
                     num = (number + i) % 10000
                     user = User.objects.get(handle=handle, number=num)

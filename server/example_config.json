@@ -11,5 +11,5 @@
     "debug" : true,
     "allowed_hosts" : ["localhost", "testserver"],
 
-    "oauth_path" : "",
+    "oauth_path" : "/path/to/your/google_secret.json",
 }

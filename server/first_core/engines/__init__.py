@@ -13,6 +13,7 @@
 #   Python Modules
 import re
 import sys
+import functools
 
 #   First Modules
 from first_core.error import FIRSTError
@@ -90,8 +91,8 @@ class AbstractEngine(object):
     def add(self, function):
         required_keys = {'id', 'apis', 'opcodes', 'architecture', 'sha256'}
         if ((dict != type(function))
-            or not required_keys.issubset(function.keys())):
-            print 'Data provided is not the correct type or required keys not provided'
+            or not required_keys.issubset(list(function.keys()))):
+            print('Data provided is not the correct type or required keys not provided')
             return
 
         self._add(function)
@@ -113,7 +114,7 @@ class AbstractEngine(object):
         try:
             self._install()
         except FIRSTEngineError as e:
-            if e.message == 'Not Implemented':
+            if str(e) == 'Not Implemented':
                 return
 
             raise e
@@ -122,7 +123,7 @@ class AbstractEngine(object):
         try:
             self._uninstall()
         except FIRSTEngineError as e:
-            if e.message == 'Not Implemented':
+            if str(e) == 'Not Implemented':
                 return
 
             raise e
@@ -185,17 +186,17 @@ class FIRSTEngineManager(object):
             try:
                 e = obj(self.__db_manager, str(e.id), e.rank)
                 if not isinstance(e, AbstractEngine):
-                    print '[EM] {} is not an AbstractEngine'.format(e)
+                    print('[EM] {} is not an AbstractEngine'.format(e))
                     continue
 
                 if e.is_operational:
                     engines.append(e)
 
             except FIRSTEngineError as e:
-                print e
+                print(e)
 
         if not engines:
-            print '[EM] Error: No engines could be loaded'
+            print('[EM] Error: No engines could be loaded')
 
         return engines
 
@@ -217,8 +218,8 @@ class FIRSTEngineManager(object):
 
         '''
         required_keys = {'id', 'apis', 'opcodes', 'architecture', 'sha256'}
-        if (dict != type(function)) or not required_keys.issubset(function.keys()):
-            print '[1stEM] Data provided is not the correct type or required keys not provided'
+        if (dict != type(function)) or not required_keys.issubset(list(function.keys())):
+            print('[1stEM] Data provided is not the correct type or required keys not provided')
             return None
 
         dis = Disassembly(function['architecture'], function['opcodes'])
@@ -270,7 +271,7 @@ class FIRSTEngineManager(object):
         engines = self._engines
 
         dis = Disassembly(architecture, opcodes)
-        for i in xrange(len(engines)):
+        for i in range(len(engines)):
             engine = engines[i]
             try:
                 results = engine.scan(opcodes, architecture, apis,
@@ -279,10 +280,10 @@ class FIRSTEngineManager(object):
                     engine_results[i] = results
 
             except Exception as e:
-                print e
+                print(e)
 
         results = {}
-        for i, hits in engine_results.iteritems():
+        for i, hits in engine_results.items():
             engine = engines[i]
 
             for result in hits:
@@ -297,8 +298,8 @@ class FIRSTEngineManager(object):
                     results[result.id].similarity = result.similarity
 
         #   Order functions
-        cmp_func = lambda x,y: cmp(y.similarity, x.similarity)
-        ordered_functions = sorted(results.values(), cmp_func)
+        cmp_func = lambda x,y: (y.similarity > x.similarity) - (y.similarity < x.similarity)
+        ordered_functions = sorted(results.values(), key=functools.cmp_to_key(cmp_func))
 
         #   Create Metadata list
         #   TODO: Narrow results to top 20 hits, use similarity and metadata rank

@@ -19,13 +19,14 @@ FIRST_CONFIG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 'first_config.json')
 CONFIG = {}
 try:
-    config_data = json.load(file(FIRST_CONFIG_FILE))
+    with open(FIRST_CONFIG_FILE, "r") as f:
+        config_data = json.load(f)
     if type(config_data) == dict:
         CONFIG = config_data
 except IOError as ioe:
-    print '[1st] IOError: {}'.format(ioe)
+    print('[1st] IOError: {}'.format(ioe))
 except ValueError as ve:
-    print '[1st] ValueError: {}'.format(ve)
+    print('[1st] ValueError: {}'.format(ve))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -50,7 +50,7 @@ class ExactMatchEngine(AbstractEngine):
             return None
 
         similarity = 90.0
-        if set(function.apis.values()) == set(apis):
+        if set([el['api'] for el in function.apis.values()]) == set(apis):
             similarity += 10.0
 
         return [FunctionResult(str(function.id), similarity)]

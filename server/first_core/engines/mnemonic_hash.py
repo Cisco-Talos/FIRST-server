@@ -80,7 +80,7 @@ class MnemonicHashEngine(AbstractEngine):
             if len(mnemonics) < MIN_REQUIRED_MNEMONICS:
                 return (None, None)
 
-            return (mnemonics, sha256(''.join(mnemonics)).hexdigest())
+            return (mnemonics, sha256(''.join(mnemonics).encode('utf-8')).hexdigest())
 
         except Exception as e:
             raise e
@@ -165,4 +165,4 @@ class MnemonicHashEngine(AbstractEngine):
         execute_from_command_line(['manage.py', 'migrate', 'engines'])
 
     def _uninstall(self):
-        print 'Manually delete tables associated with {}'.format(self.engine_name)
+        print('Manually delete tables associated with {}'.format(self.engine_name))

@@ -1,9 +1,9 @@
 FROM ubuntu
 RUN apt-get update
 RUN apt-get -y dist-upgrade
-RUN apt-get install -y python-pip mysql-client libmysqlclient-dev apache2 libapache2-mod-wsgi libapache2-mod-wsgi
+RUN apt-get install -y python3-pip mysql-client libmysqlclient-dev apache2 libapache2-mod-wsgi-py3
 COPY install/requirements.txt /tmp
-RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 RUN useradd -m -U -d /home/first -s /bin/bash first
 COPY ./server /home/first

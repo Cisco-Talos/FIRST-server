@@ -51,7 +51,7 @@ class UserCmd(Cmd):
         return
 
     def default(self, line):
-        print '"{}" is unknown command'.format(line)
+        print('"{}" is unknown command'.format(line))
 
     def preloop(self):
         print ( '\n\n'
@@ -84,18 +84,18 @@ class UserCmd(Cmd):
 
     def do_shell(self, line):
         '''Run line in python'''
-        exec line
+        exec(line)
 
 class RootCmd(UserCmd):
     def do_list(self, line):
-        print 'list - List all registered users'
+        print('list - List all registered users')
         if line in ['help', '?']:
-            print 'Usage: list \n'
+            print('Usage: list \n')
             return
 
-        print 'Registered Users\n'
+        print('Registered Users\n')
         if User.objects.count() == 0:
-            print 'No users are registered'
+            print('No users are registered')
             return
 
         header = (  '+{}+{}+\n'.format('-' * 39, '-' * 10) +
@@ -105,21 +105,21 @@ class RootCmd(UserCmd):
         for user in User.objects.all():
             handle = user.user_handle
             if (i % 15) == 0:
-                print header
-            print '| {0:37} | {1:^8} |'.format(handle, user.active)
+                print(header)
+            print('| {0:37} | {1:^8} |'.format(handle, user.active))
             i += 1
 
-        print '+{}+{}+'.format('-' * 39, '-' * 10)
+        print('+{}+{}+'.format('-' * 39, '-' * 10))
 
     def do_adduser(self, line):
-        print 'info - Manually add user to FIRST'
+        print('info - Manually add user to FIRST')
         if line in ['', 'help', '?']:
-            print 'Usage: adduser <user handle> <user email>'
+            print('Usage: adduser <user handle> <user email>')
             return
 
         line = line.split(' ')
         if len(line) !=2:
-            print 'The correct arguments were not provided.'
+            print('The correct arguments were not provided.')
             return
 
         #   Verify handle provided is valid
@@ -128,33 +128,33 @@ class RootCmd(UserCmd):
             return
 
         if not re.match(r'^[a-zA-Z\d\._]+@[a-zA-Z\d\.\-_]+(?:\.[a-zA-Z]{2,4})+$', line[1]):
-            print 'Invalid email provided.'
+            print('Invalid email provided.')
             return
 
         email = line[1]
         user = self._get_db_user_obj(line[0])
         if user:
-            print 'User {} already exists'.format(line[0])
+            print('User {} already exists'.format(line[0]))
             return
 
         user = User(email=email, handle=handle, number=num, api_key=uuid4())
-        user.name = raw_input('Enter user name: ')
+        user.name = input('Enter user name: ')
         user.save()
 
-        print 'User {0.user_handle} created (api key: {0.api_key})'.format(user)
+        print('User {0.user_handle} created (api key: {0.api_key})'.format(user))
 
 
     def do_info(self, line):
-        print 'info - Displays details about a registered User'
+        print('info - Displays details about a registered User')
         if line in ['', 'help', '?']:
-            print 'Usage: info <user handle>'
+            print('Usage: info <user handle>')
             return
 
         user = self._get_db_user_obj(line)
         if not user:
             return
 
-        print ('+' + '-'*65 + '+\n'
+        print(('+' + '-'*65 + '+\n'
                '| Name    | {0.name:53} |\n'
                '+' + '-'*9 + '+' + '-'*55 + '\n'
                '| Email   | {0.email:53} |\n'
@@ -164,12 +164,12 @@ class RootCmd(UserCmd):
                '| Created | {1:53} |\n'
                '+' + '-'*9 + '+' + '-'*55 + '\n'
                '| Active  | {0.active:53} |\n'
-               '+' + '-'*65 + '+\n').format(user, str(user.created))
+               '+' + '-'*65 + '+\n').format(user, str(user.created)))
 
     def do_enable(self, line):
-        print 'enable - Enable user \n'
+        print('enable - Enable user \n')
         if line in ['', 'help', '?']:
-            print 'Usage: enable <user handle>'
+            print('Usage: enable <user handle>')
             return
 
         user = self._get_db_user_obj(line)
@@ -178,12 +178,12 @@ class RootCmd(UserCmd):
 
         user.active = True
         user.save()
-        print 'User "{}" enabled'.format(line)
+        print('User "{}" enabled'.format(line))
 
     def do_disable(self, line):
-        print 'disable - Disable user \n'
+        print('disable - Disable user \n')
         if line in ['', 'help', '?']:
-            print 'Usage: disable <user handle>'
+            print('Usage: disable <user handle>')
             return
 
         user = self._get_db_user_obj(line)
@@ -192,12 +192,12 @@ class RootCmd(UserCmd):
 
         user.active = False
         user.save()
-        print 'User "{}" disabled'.format(line)
+        print('User "{}" disabled'.format(line))
 
     def _expand_user_handle(self, user_handle):
         matches = re.match('^([^#]+)#(\d{4})$', user_handle)
         if not matches:
-            print 'The provided handle is invalid'
+            print('The provided handle is invalid')
             return (None, None)
 
         handle, num = matches.groups()
@@ -211,7 +211,7 @@ class RootCmd(UserCmd):
 
         user = User.objects.filter(handle=handle, number=int(num))
         if not user:
-            print 'Unable to locate User handle "{}"'.format(line)
+            print('Unable to locate User handle "{}"'.format(line))
             return
 
         return user.get()
