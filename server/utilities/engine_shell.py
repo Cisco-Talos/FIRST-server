@@ -123,7 +123,7 @@ class RootCmd(EngineCmd):
         d = engine.description
         d = [d[i:i+53] for i in range(0, len(d), 53)]
         d = ' |\n|             | '.join(['{:53}'.format(x) for x in d])
-        print ('+' + '-'*69 + '+\n'
+        print(('+' + '-'*69 + '+\n'
                '| Name        | {0.name:53} |\n'
                '+' + '-'*13 + '+' + '-'*55 + '\n'
                '| Description | {1:53} |\n'
@@ -137,7 +137,7 @@ class RootCmd(EngineCmd):
                '| Rank        | {0.rank:<53} |\n'
                '+' + '-'*13 + '+' + '-'*55 + '\n'
                '| Active      | {0.active:<53} |\n'
-               '+' + '-'*69 + '+\n').format(engine, d)
+               '+' + '-'*69 + '+\n').format(engine, d))
 
     def do_install(self, line):
         print('install  - Installs engine\n')

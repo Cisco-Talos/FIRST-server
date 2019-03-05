@@ -154,7 +154,7 @@ class RootCmd(UserCmd):
         if not user:
             return
 
-        print ('+' + '-'*65 + '+\n'
+        print(('+' + '-'*65 + '+\n'
                '| Name    | {0.name:53} |\n'
                '+' + '-'*9 + '+' + '-'*55 + '\n'
                '| Email   | {0.email:53} |\n'
@@ -164,7 +164,7 @@ class RootCmd(UserCmd):
                '| Created | {1:53} |\n'
                '+' + '-'*9 + '+' + '-'*55 + '\n'
                '| Active  | {0.active:53} |\n'
-               '+' + '-'*65 + '+\n').format(user, str(user.created))
+               '+' + '-'*65 + '+\n').format(user, str(user.created)))
 
     def do_enable(self, line):
         print('enable - Enable user \n')
