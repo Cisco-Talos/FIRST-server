@@ -68,6 +68,10 @@ Once an engine is installed you can start using your FIRST installation to add a
         $ cd FIRST-server/server
         $ python manage.py runserver 0.0.0.0:1337
 
+.. note:: FreeBSD port
+
+    FIRST also has a FreeBSD port available: https://www.freshports.org/security/py-first-server/
+
 .. _server-docs:
 
 .. toctree::
