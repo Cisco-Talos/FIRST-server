@@ -123,7 +123,7 @@ class Disassembly(object):
 
     def instructions(self):
         #   When first called function will return cached instructions
-        for i in xrange(len(self.data)):
+        for i in range(len(self.data)):
             yield self.data[i]
 
         #   Then iterate through non-cached instructions

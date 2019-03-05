@@ -20,7 +20,7 @@
 #-------------------------------------------------------------------------------
 
 #   Python Modules
-import ConfigParser
+import configparser 
 from hashlib import md5
 
 #   FIRST Modules
@@ -58,7 +58,7 @@ class AbstractDB(object):
         '''
         Constructor.
 
-        @param conf: ConfigParser.RawConfigParser
+        @param conf: configparser.RawConfigParser
         '''
         raise FIRSTDBError('TODO: implement')
 
@@ -79,10 +79,10 @@ class FIRSTDBManager(object):
                     self._dbs[d.name] = d
 
             except FIRSTDBError as e:
-                print e
+                print(e)
 
         if not self._dbs:
-            print '[DBM] Error: No dbs could be loaded'
+            print('[DBM] Error: No dbs could be loaded')
 
     def db_list(self):
         '''

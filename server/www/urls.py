@@ -1,16 +1,16 @@
-from django.conf.urls import url
+from django.urls import path, re_path, include
 
 from . import views
 
 app_name = 'www'
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^profile$', views.profile, name='profile'),
+    path(r'', views.index, name='index'),
+    path(r'profile', views.profile, name='profile'),
 
-    url(r'^login$', views.login, name='login'),
-    url(r'^login/(?P<service>[a-z]+)$', views.login, name='login'),
-    url(r'^oauth/(?P<service>[a-z]+)$', views.oauth, name='oauth'),
-    url(r'^logout$', views.logout, name='logout'),
+    path(r'login', views.login, name='login'),
+    re_path(r'^login/(?P<service>[a-z]+)$', views.login, name='login'),
+    re_path(r'^oauth/(?P<service>[a-z]+)$', views.oauth, name='oauth'),
+    path(r'logout', views.logout, name='logout'),
 
-    url(r'^register$', views.register, name='register')
+    path(r'register', views.register, name='register')
 ]
