@@ -26,7 +26,41 @@ Installing your own FIRST server can be quick and easy with an Ubuntu machine an
         http://localhost:8888/oauth/google
         http://first.talosintelligence.com/oauth/google
 
-    Once created you will have the option to down the JSON file containing the generated secret. Optionally, you can add install/ssl/apache.crt and apache.key file if you have an SSL certificate you would prefer to use.
+    Once created you will have the option to download the JSON file containing the generated secret. Optionally, you can add install/ssl/apache.crt and apache.key file if you have an SSL certificate you would prefer to use. (Note that docker will generate one for you when the docker image is built.)
+
+.. important::
+
+    **Server configuration (first_config.json)**
+
+    Before building the docker image of FIRST-server you will need to create a configuration file under the path ``server/first_config.json``. You have an example configuration file that you can copy, under the following path: ``server/example_config.json``. This configuration file has the following contents:
+
+    .. code::
+
+        {
+            "secret_key" : "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+
+            "db_engine" : "django.db.backends.mysql",
+            "db_dbname" : "first_db",
+            "db_user" : "root",
+            "db_password" : "password12345",
+            "db_host" : "mysql",
+            "db_port" : 3306,
+
+            "debug" : true,
+            "allowed_hosts" : ["localhost", "testserver"],
+
+            "oauth_path" : "/usr/local/etc/google_secret.json"
+        }
+
+    This configuration values should just work correctly on a default local docker set up. For a production enviroment:
+
+        * ``secret_key`` should be a random and unique value
+        * ``db_user``, ``db_password``, ``db_host``, ``db_port`` should be updated to match your MySQL production database.
+        * ``debug`` should be set to false
+        * ``allowed_hosts`` should match the host name where you configured your server (e.g.: first.talosintelligence.com)
+        * ``oauth_path`` should match the path where you have your ``google_secret.json`` file. 
+ 
+Once you have created and downloaded your ``google_secret.json`` file, and created the ``first_config.json`` configuration file, you can proceed to build and start your FIRST-server docker image:
 
 .. code::
 

@@ -21,7 +21,7 @@ import sys
 import types
 sys.path.insert(0, os.path.join(os.path.abspath('..'), 'server'))
 
-import sphinx.ext.autodoc
+import sphinx.ext.autodoc.importer
 
 # -- General configuration ------------------------------------------------
 
@@ -44,7 +44,7 @@ autoclass_content = 'class'
 autodoc_mock_imports = ['httplib2', 'oauth2client', 'apiclient',
                         'django', 'capstone']
 
-class _MyMockModule(sphinx.ext.autodoc._MockModule):
+class _MyMockModule(sphinx.ext.autodoc.importer._MockModule):
     '''Class created to get around autodoc issues with server's dependencies.'''
     @classmethod
     def __getattr__(self, name):
