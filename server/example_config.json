@@ -2,14 +2,14 @@
     "secret_key" : "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
 
     "db_engine" : "django.db.backends.mysql",
-    "db_dbname" : "first",
-    "db_user" : "user",
-    "db_password" : "pass",
-    "db_host" : "localhost",
+    "db_dbname" : "first_db",
+    "db_user" : "root",
+    "db_password" : "password12345",
+    "db_host" : "mysql",
     "db_port" : 3306,
 
     "debug" : true,
     "allowed_hosts" : ["localhost", "testserver"],
 
-    "oauth_path" : "/path/to/your/google_secret.json",
+    "oauth_path" : "/usr/local/etc/google_secret.json"
 }

@@ -1,12 +1,77 @@
 #   Third Party Modules
-from capstone import *
-from capstone.ppc import *
-from capstone.systemz import *
-from capstone.arm import *
-from capstone.arm64 import *
-from capstone.x86 import *
-from capstone.sparc import *
-from capstone.mips import *
+
+from capstone import CS_MODE_32
+from capstone import CS_MODE_64
+from capstone import CS_MODE_16
+
+from capstone.ppc import CS_ARCH_PPC
+from capstone.ppc import PPC_OP_REG
+from capstone.ppc import PPC_OP_IMM
+from capstone.ppc import PPC_OP_MEM
+from capstone.ppc import PPC_OP_INVALID
+
+from capstone.x86 import CS_ARCH_X86
+from capstone.x86 import X86_OP_REG
+from capstone.x86 import X86_OP_IMM
+from capstone.x86 import X86_OP_MEM
+from capstone.x86 import X86_OP_INVALID
+from capstone.x86 import X86_INS_CALL
+from capstone.x86 import X86_INS_JA
+from capstone.x86 import X86_INS_JAE
+from capstone.x86 import X86_INS_JB
+from capstone.x86 import X86_INS_JBE
+from capstone.x86 import X86_INS_JCXZ
+from capstone.x86 import X86_INS_JE
+from capstone.x86 import X86_INS_JECXZ
+from capstone.x86 import X86_INS_JG
+from capstone.x86 import X86_INS_JGE
+from capstone.x86 import X86_INS_JL
+from capstone.x86 import X86_INS_JLE
+from capstone.x86 import X86_INS_JMP
+from capstone.x86 import X86_INS_JNE
+from capstone.x86 import X86_INS_JNO
+from capstone.x86 import X86_INS_JNP
+from capstone.x86 import X86_INS_JNS
+from capstone.x86 import X86_INS_JO
+from capstone.x86 import X86_INS_JP
+from capstone.x86 import X86_INS_JRCXZ
+from capstone.x86 import X86_INS_JS
+from capstone.x86 import X86_INS_LJMP
+from capstone.x86 import X86_REG_SP
+from capstone.x86 import X86_REG_EBP
+from capstone.x86 import X86_REG_ESP
+from capstone.x86 import X86_REG_RSP
+
+from capstone.systemz import CS_ARCH_SYSZ
+from capstone.systemz import SYSZ_OP_REG
+from capstone.systemz import SYSZ_OP_IMM
+from capstone.systemz import SYSZ_OP_MEM
+from capstone.systemz import SYSZ_OP_INVALID
+
+from capstone.arm import CS_ARCH_ARM
+from capstone.arm import CS_MODE_ARM
+from capstone.arm import CS_ARCH_ARM64
+from capstone.arm import ARM_OP_REG
+from capstone.arm import ARM_OP_IMM
+from capstone.arm import ARM_OP_MEM
+from capstone.arm import ARM_OP_INVALID
+from capstone.arm import ARM64_OP_REG
+from capstone.arm import ARM64_OP_IMM
+from capstone.arm import ARM64_OP_MEM
+from capstone.arm import ARM64_OP_INVALID
+
+from capstone.sparc import CS_ARCH_SPARC
+from capstone.sparc import SPARC_OP_IMM
+from capstone.sparc import SPARC_OP_REG
+from capstone.sparc import SPARC_OP_MEM
+from capstone.sparc import SPARC_OP_INVALID
+
+from capstone.mips import CS_ARCH_MIPS
+from capstone.mips import MIPS_OP_REG
+from capstone.mips import MIPS_OP_IMM
+from capstone.mips import MIPS_OP_MEM
+from capstone.mips import MIPS_OP_INVALID
+
 
 arch_mapping = {
     'ppc' : (CS_ARCH_PPC, CS_MODE_32),
