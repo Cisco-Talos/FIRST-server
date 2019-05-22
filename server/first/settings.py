@@ -50,7 +50,7 @@ ALLOWED_HOSTS = CONFIG.get('allowed_hosts', [])
 INSTALLED_APPS = [
     'www.apps.WwwConfig',
     'engines.apps.EnginesConfig',
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
