@@ -72,6 +72,8 @@ from capstone.mips import MIPS_OP_IMM
 from capstone.mips import MIPS_OP_MEM
 from capstone.mips import MIPS_OP_INVALID
 
+from capstone import Cs
+
 
 arch_mapping = {
     'ppc' : (CS_ARCH_PPC, CS_MODE_32),
