@@ -12,7 +12,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from first_core.models import Function, User
 from first_core.auth import Authentication, require_login, FIRSTAuthError
 
-def handler404(request):
+def handler404(request, exc):
     return render(request, 'www/404.html', None)
 
 
