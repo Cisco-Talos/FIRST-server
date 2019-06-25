@@ -90,6 +90,7 @@ Python script ``engine_shell.py`` can be provided with command line arguments or
     $ python engine_shell.py install first_core.engines.exact_match ExactMatchEngine <developer_email>
     $ python engine_shell.py install first_core.engines.mnemonic_hash MnemonicHashEngine <developer_email>
     $ python engine_shell.py install first_core.engines.basic_masking BasicMaskingEngine <developer_email>
+    $ python engine_shell.py install first_core.engines.catalog1 Catalog1Engine <developer_email>
 
 Once an engine is installed you can start using your FIRST installation to add and/or query for annotations. Without engines FIRST will still be able to store annotations, but will never return any results for query operations.
 
