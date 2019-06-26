@@ -239,13 +239,11 @@ class Catalog1Engine(AbstractEngine):
         # Step 1: Let's search all the matching catalog1 hashes
         matching_function_ids = list()
         for ch in catalog1hashes:
-            try:
-                db_obj = Catalog1.objects.get(catalog1hashes__catalog_hash=ch,
-                                              architecture=architecture)
+            db_result = Catalog1.objects.filter(catalog1hashes__catalog_hash=ch,
+                                                architecture=architecture)
+            for db_obj in db_result:
                 for f in db_obj.functions.all():
                     matching_function_ids.append(f.func)
-            except ObjectDoesNotExist:
-                pass
 
         cc = Counter(matching_function_ids)
         for function_id, counter in cc.most_common(10):
@@ -253,7 +251,6 @@ class Catalog1Engine(AbstractEngine):
                 similarity = counter * 100 / NUM_PERMS
                 print("Catalog1 log: %d %f" % (function_id, similarity))
                 result.append(FunctionResult(str(function_id), similarity))
-                break
 
         return result
 
