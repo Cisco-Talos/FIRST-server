@@ -141,7 +141,7 @@ class RootCmd(UserCmd):
         user.name = input('Enter user name: ')
         user.save()
 
-        print('User {0.user_handle} created (api key: {0.api_key})'.format(user))
+        print('User {0} created (api key: {1})'.format(user.user_handle, str(user.api_key).upper()))
 
 
     def do_info(self, line):
