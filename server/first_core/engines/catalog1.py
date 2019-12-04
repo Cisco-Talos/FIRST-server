@@ -128,8 +128,7 @@ class Catalog1Engine(AbstractEngine):
 
         # Step 0: Let's try to see if the same catalog1_sha256 exists:
         try:
-            db_obj = Catalog1.objects.get(sha256=catalog1_sha256,
-                                          architecture=architecture)
+            db_obj = Catalog1.objects.get(sha256=catalog1_sha256, architecture=architecture)
             if db_obj:
                 for f in db_obj.functions.all():
                     similarity = 100.0
@@ -146,17 +145,18 @@ class Catalog1Engine(AbstractEngine):
             pass
 
         # Step 1: Let's search all the matching catalog1 hashes
-        matching_function_ids = list()
-        for ch in catalog1hashes:
-            db_result = Catalog1.objects.filter(catalog1hashes__catalog_hash=ch,
-                                                architecture=architecture)
-            for db_obj in db_result:
-                for f in db_obj.functions.all():
-                    matching_function_ids.append(f.func)
+        matching_catalog_functions = Catalog1.objects.filter(architecture=architecture, catalog1hashes__catalog_hash__in=catalog1hashes).values_list('functions', flat=True)
+        matching_function_columns = Catalog1Functions.objects.filter(id__in=matching_catalog_functions)
 
-        cc = Counter(matching_function_ids)
-        for function_id, counter in cc.most_common(10):
+        matching_function_ids = {}
+        for func_column in matching_function_columns:
+            matching_function_ids[func_column.id] = func_column.func
+
+        cc = Counter(matching_catalog_functions)
+        for func_m_id, counter in cc.most_common(10):
             if counter > 0:
+                function_id = matching_function_ids[func_m_id]
+                
                 similarity = counter * 100 / NUM_PERMS
                 print("Catalog1 log: %d %f" % (function_id, similarity))
                 result.append(FunctionResult(str(function_id), similarity))
