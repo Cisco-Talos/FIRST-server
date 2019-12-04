@@ -40,7 +40,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
 NUM_PERMS = 64
-
+MATCH_THRESHOLD = 80
 
 class Catalog1(models.Model):
     sha256 = models.CharField(max_length=64)
@@ -156,10 +156,10 @@ class Catalog1Engine(AbstractEngine):
         for func_m_id, counter in cc.most_common(10):
             if counter > 0:
                 function_id = matching_function_ids[func_m_id]
-                
                 similarity = counter * 100 / NUM_PERMS
-                print("Catalog1 log: %d %f" % (function_id, similarity))
-                result.append(FunctionResult(str(function_id), similarity))
+
+                if similarity > MATCH_THRESHOLD:
+                    result.append(FunctionResult(str(function_id), similarity))
 
         return result
 
