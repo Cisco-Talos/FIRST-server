@@ -1,7 +1,8 @@
 FROM ubuntu
 RUN apt-get update
 RUN apt-get -y dist-upgrade
-RUN apt-get install -y python3-pip mysql-client libmysqlclient-dev apache2 libapache2-mod-wsgi-py3
+RUN apt-get install -y build-essential python3-pip python3-dev libssl-dev libcrypto++-dev
+RUN apt-get install -y mysql-client libmysqlclient-dev apache2 libapache2-mod-wsgi-py3
 COPY install/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
