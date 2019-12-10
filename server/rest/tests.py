@@ -477,7 +477,7 @@ class RestTests(TestCase):
                         },
                     'function_id_2' :
                         {
-                            'opcodes' : "VTHSieWLafrci3UMU41Y/w+2DBaITBMBg8IBhMl18VteXcM=",
+                            'opcodes' : "VTHSieWLaQhWi3UMU41Y/w+2DBaITBMBg8IBhMl18VteXcM=",
                             'architecture' : "intel32",
                             'apis' : ["CreateThread", "WriteProcessMemory"]
                         }
@@ -495,7 +495,7 @@ class RestTests(TestCase):
 
         self.assertIs("function_id_0" in d["results"]["matches"], True)
         self.assertIs("function_id_1" in d["results"]["matches"], True)
-        self.assertIs("function_id_2" in d["results"]["matches"], False)
+        self.assertIs("function_id_2" in d["results"]["matches"], True)
 
         for f_id in d["results"]["matches"]:
             for f in d["results"]["matches"][f_id]:
