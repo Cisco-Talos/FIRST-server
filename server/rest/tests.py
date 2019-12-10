@@ -495,7 +495,7 @@ class RestTests(TestCase):
 
         self.assertIs("function_id_0" in d["results"]["matches"], True)
         self.assertIs("function_id_1" in d["results"]["matches"], True)
-        self.assertIs("function_id_2" in d["results"]["matches"], True)
+        self.assertIs("function_id_2" in d["results"]["matches"], False)
 
         for f_id in d["results"]["matches"]:
             for f in d["results"]["matches"][f_id]:
