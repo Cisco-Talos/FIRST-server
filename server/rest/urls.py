@@ -21,7 +21,7 @@ urlpatterns = [
         views.metadata_unapplied, name='metadata_unapplied'),
     re_path(r'metadata/get/(?P<api_key>' + api_key_pattern + ')$',
         views.metadata_get, name='metadata_get'),
-    re_path(r'metadata/delete/(?P<api_key>' + api_key_pattern + ')$',
+    re_path(r'metadata/delete/(?P<api_key>' + api_key_pattern + ')/(?P<_id>[A-Fa-f\d]{26})$',
         views.metadata_delete, name='metadata_delete'),
     re_path(r'metadata/created/(?P<api_key>' + api_key_pattern + ')$',
         views.metadata_created, name='metadata_created'),
