@@ -1,5 +1,5 @@
 mysqlclient
-django==3.0
+django
 werkzeug
 capstone
 httplib2
