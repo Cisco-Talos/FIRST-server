@@ -107,7 +107,7 @@ class Migration(migrations.Migration):
                 ('rank', models.BigIntegerField(default=0)),
                 ('active', models.BooleanField(default=True)),
                 ('service', models.CharField(max_length=16)),
-                ('auth_data', models.CharField(max_length=32768)),
+                ('auth_data', models.TextField()),
             ],
             options={
                 'db_table': 'User',
