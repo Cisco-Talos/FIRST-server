@@ -1,5 +1,10 @@
 .. _server-restful-api:
 
+# ARCHIVED PROJECT
+==================
+
+THIS PROJECT HAS BEEN ARCHIVED AND ITS ISSUE QUEUE IS LOCKED. THE PROJECT WILL BE KEPT PUBLIC ONLY FOR REFERENCE PURPORSES.
+
 RESTful API
 ===========
 All RESTful APIs are available to users with active and valid API keys. To get register and get an API key see :ref:`registering`. All below URLs make the assumption the FIRST server is located at FIRST_HOST. If using the public FIRST server this will be http://first-plugin-us.
